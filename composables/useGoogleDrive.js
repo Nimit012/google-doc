@@ -10,7 +10,7 @@ export const useGoogleDrive = () => {
   const CLIENT_ID = '744421146988-ctts8p2ovi3nmv9qqf40d4kun3dd6l06.apps.googleusercontent.com'
   const API_KEY = 'AIzaSyDoi51hsIMIMpqBXUh6EgvqZ9qubKamgsE'
   const SCOPES = 'https://www.googleapis.com/auth/drive'
-  const ADMIN_EMAIL = 'pratham.gupta@comprotechnologies.com'
+  const ADMIN_EMAIL = 'nimit.jain@comprotechnologies.com'
   
   const TOKEN_STORAGE_KEY = 'google_drive_access_token'
   const EXPIRY_STORAGE_KEY = 'google_drive_token_expiry'
@@ -18,7 +18,7 @@ export const useGoogleDrive = () => {
   // Use global state instead of local refs
   const accessToken = globalAccessToken
   const tokenExpiry = globalTokenExpiry
-  const tokenClient = globalTokenClient
+  const tokenClient = globalTokenClient 
   const isApiLoaded = globalIsApiLoaded
   const thumbnailCache = globalThumbnailCache
 
@@ -336,6 +336,286 @@ export const useGoogleDrive = () => {
     return updatedPermission
   }
 
+  const createNamedVersion = async (fileId, versionName) => {
+    try {
+      console.log(`📝 Creating named version: "${versionName}" for file: ${fileId}`)
+      
+      // First, let's see what revisions already exist
+      console.log('🔍 Checking existing revisions...')
+      const initialRevisionsResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/revisions`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`
+        }
+      })
+      
+      if (initialRevisionsResponse.ok) {
+        const initialData = await initialRevisionsResponse.json()
+        console.log('📋 Initial revisions count:', initialData.revisions?.length || 0)
+        console.log('📋 Initial revisions:', initialData.revisions?.map(r => ({ id: r.id, modifiedTime: r.modifiedTime })))
+      }
+
+      // Method 1: Try creating a named version from current revision first
+      console.log('🎯 Attempting to name the current revision...')
+      const currentRevisionsResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/revisions`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`
+        }
+      })
+
+      if (currentRevisionsResponse.ok) {
+        const currentData = await currentRevisionsResponse.json()
+        const revisions = currentData.revisions || []
+        
+        if (revisions.length > 0) {
+          const latestRevision = revisions[revisions.length - 1]
+          console.log('📌 Trying to name revision:', latestRevision.id)
+          
+          const nameCurrentResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/revisions/${latestRevision.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Authorization': `Bearer ${accessToken.value}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              description: versionName,
+              keepForever: true
+            })
+          })
+
+          if (nameCurrentResponse.ok) {
+            const namedRevision = await nameCurrentResponse.json()
+            console.log('✅ Successfully named current revision:', namedRevision)
+            
+            // Store locally
+            const versionData = {
+              versionName,
+              createdAt: new Date().toISOString(),
+              fileId: fileId,
+              revisionId: latestRevision.id
+            }
+            
+            try {
+              const versionKey = `file_versions_${fileId}`
+              const existingVersions = JSON.parse(localStorage.getItem(versionKey) || '[]')
+              existingVersions.push(versionData)
+              localStorage.setItem(versionKey, JSON.stringify(existingVersions))
+            } catch (e) {
+              console.warn('Could not store version info locally:', e)
+            }
+            
+            return versionData
+          } else {
+            const error = await nameCurrentResponse.json()
+            console.error('❌ Failed to name current revision:', error)
+          }
+        }
+      }
+
+      // Method 2: If naming current revision failed, try making a change to force a new revision
+      console.log('🔄 Trying to create new revision by making document change...')
+      
+      // Make a more substantial change - add a comment to the document
+      const commentResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/comments`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          content: `Version marker: ${versionName} - ${new Date().toISOString()}`,
+          anchor: JSON.stringify({
+            r: 'kix.0'  // This targets the beginning of the document
+          })
+        })
+      })
+
+      if (commentResponse.ok) {
+        console.log('💬 Comment added to document')
+        
+        // Wait for the change to propagate
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        
+        // Now try to get the latest revision and name it
+        const newRevisionsResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/revisions`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken.value}`
+          }
+        })
+
+        if (newRevisionsResponse.ok) {
+          const newData = await newRevisionsResponse.json()
+          const newRevisions = newData.revisions || []
+          console.log('📋 Revisions after comment:', newRevisions.length)
+          
+          if (newRevisions.length > 0) {
+            const latestRevision = newRevisions[newRevisions.length - 1]
+            console.log('📌 Trying to name new revision:', latestRevision.id)
+            
+            const nameNewResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/revisions/${latestRevision.id}`, {
+              method: 'PATCH',
+              headers: {
+                'Authorization': `Bearer ${accessToken.value}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                description: versionName,
+                keepForever: true
+              })
+            })
+
+            if (nameNewResponse.ok) {
+              const namedRevision = await nameNewResponse.json()
+              console.log('✅ Successfully named new revision:', namedRevision)
+              
+              // Now delete the comment since it was just for creating the revision
+              try {
+                const commentsListResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/comments`, {
+                  headers: {
+                    'Authorization': `Bearer ${accessToken.value}`
+                  }
+                })
+                
+                if (commentsListResponse.ok) {
+                  const commentsData = await commentsListResponse.json()
+                  const versionComment = commentsData.comments?.find(c => c.content?.includes('Version marker:'))
+                  
+                  if (versionComment) {
+                    await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/comments/${versionComment.id}`, {
+                      method: 'DELETE',
+                      headers: {
+                        'Authorization': `Bearer ${accessToken.value}`
+                      }
+                    })
+                    console.log('🗑️ Cleaned up version marker comment')
+                  }
+                }
+              } catch (cleanupError) {
+                console.warn('⚠️ Could not clean up version marker comment:', cleanupError)
+              }
+              
+            } else {
+              const error = await nameNewResponse.json()
+              console.error('❌ Failed to name new revision:', error)
+            }
+          }
+        }
+      } else {
+        console.error('❌ Failed to add comment to document')
+      }
+
+      // Fallback: Store locally even if Google Drive naming failed
+      const fallbackVersion = {
+        versionName,
+        createdAt: new Date().toISOString(),
+        fileId: fileId,
+        fallback: true
+      }
+      
+      try {
+        const versionKey = `file_versions_${fileId}`
+        const existingVersions = JSON.parse(localStorage.getItem(versionKey) || '[]')
+        existingVersions.push(fallbackVersion)
+        localStorage.setItem(versionKey, JSON.stringify(existingVersions))
+        console.log('✅ Version info stored locally as fallback')
+      } catch (e) {
+        console.warn('Fallback storage failed:', e)
+      }
+      
+      return fallbackVersion
+
+    } catch (error) {
+      console.error('Failed to create named version:', error)
+      
+      // Final fallback
+      const fallbackVersion = {
+        versionName,
+        createdAt: new Date().toISOString(),
+        fileId: fileId,
+        fallback: true
+      }
+      
+      try {
+        const versionKey = `file_versions_${fileId}`
+        const existingVersions = JSON.parse(localStorage.getItem(versionKey) || '[]')
+        existingVersions.push(fallbackVersion)
+        localStorage.setItem(versionKey, JSON.stringify(existingVersions))
+      } catch (e) {
+        console.warn('All version creation methods failed')
+      }
+      
+      return fallbackVersion
+    }
+  }
+
+  const getVersionHistory = async (fileId) => {
+    try {
+      console.log(`📚 Getting version history for file: ${fileId}`)
+      
+      // Get our locally stored version tracking (since Google Drive's API doesn't easily give us custom names)
+      const versionKey = `file_versions_${fileId}`
+      const localVersions = JSON.parse(localStorage.getItem(versionKey) || '[]')
+      
+      console.log('✅ Version history retrieved:', localVersions)
+      return localVersions
+      
+    } catch (error) {
+      console.error('Failed to get version history:', error)
+      return []
+    }
+  }
+
+  const openVersionHistory = (fileId) => {
+    // Open Google Drive version history directly
+    const versionHistoryUrl = `https://docs.google.com/document/d/${fileId}/revisions`
+    window.open(versionHistoryUrl, '_blank')
+    console.log('🔍 Opening Google Drive version history')
+  }
+
+  const getTaskVersions = (copiedDocId) => {
+    try {
+      // Get versions from both localStorage sources
+      const versionKey = `file_versions_${copiedDocId}`
+      const fileVersions = JSON.parse(localStorage.getItem(versionKey) || '[]')
+      
+      const metadataKey = `task_doc_${copiedDocId}`
+      const taskMetadata = JSON.parse(localStorage.getItem(metadataKey) || '{}')
+      
+      const versions = []
+      
+      // Add submission version if it exists
+      if (taskMetadata.submissionVersion) {
+        versions.push({
+          type: 'submission',
+          ...taskMetadata.submissionVersion
+        })
+      }
+      
+      // Add review version if it exists  
+      if (taskMetadata.reviewVersion) {
+        versions.push({
+          type: 'review',
+          ...taskMetadata.reviewVersion
+        })
+      }
+      
+      // Add any file versions
+      fileVersions.forEach(version => {
+        if (!versions.find(v => v.versionName === version.versionName)) {
+          versions.push({
+            type: 'file',
+            ...version
+          })
+        }
+      })
+      
+      return versions.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+      
+    } catch (error) {
+      console.error('Failed to get task versions:', error)
+      return []
+    }
+  }
+
   const transferOwnership = async (fileId, newOwnerEmail) => {
     console.log(`👑 Transferring ownership to: ${newOwnerEmail}`)
     
@@ -395,6 +675,20 @@ export const useGoogleDrive = () => {
     try {
       console.log('📋 Transferring document access from student to teacher...')
       
+      // Create submission version before changing permissions
+      const submissionTimestamp = new Date().toLocaleString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      })
+      const submissionVersionName = `Submission ${submissionTimestamp}`
+      
+      console.log('📌 Creating submission version...')
+      const submissionVersion = await createNamedVersion(copiedDocId, submissionVersionName)
+      
       // Get current permissions to find student permission ID
       const permissions = await listPermissions(copiedDocId)
       const studentPermission = permissions.find(p => p.emailAddress === studentEmail && p.role === 'writer')
@@ -418,10 +712,14 @@ export const useGoogleDrive = () => {
       const metadata = JSON.parse(localStorage.getItem(metadataKey) || '{}')
       metadata.status = 'teacher_review'
       metadata.transferredAt = new Date().toISOString()
+      metadata.submissionVersion = submissionVersion
       localStorage.setItem(metadataKey, JSON.stringify(metadata))
       
-      console.log('✅ Document access transferred successfully')
-      return true
+      console.log('✅ Document access transferred successfully with submission version created')
+      return {
+        success: true,
+        submissionVersion
+      }
     } catch (error) {
       console.error('Failed to transfer to teacher:', error)
       throw error
@@ -431,6 +729,20 @@ export const useGoogleDrive = () => {
   const finalizeDocument = async (copiedDocId, teacherEmail) => {
     try {
       console.log('🏁 Finalizing document permissions...')
+      
+      // Create review completion version before changing permissions
+      const reviewTimestamp = new Date().toLocaleString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      })
+      const reviewVersionName = `Review Complete ${reviewTimestamp}`
+      
+      console.log('📌 Creating review completion version...')
+      const reviewVersion = await createNamedVersion(copiedDocId, reviewVersionName)
       
       // Get current permissions
       const permissions = await listPermissions(copiedDocId)
@@ -451,10 +763,14 @@ export const useGoogleDrive = () => {
       const metadata = JSON.parse(localStorage.getItem(metadataKey) || '{}')
       metadata.status = 'completed'
       metadata.finalizedAt = new Date().toISOString()
+      metadata.reviewVersion = reviewVersion
       localStorage.setItem(metadataKey, JSON.stringify(metadata))
       
-      console.log('✅ Document finalized - only admin has edit access, others have view access')
-      return true
+      console.log('✅ Document finalized with review completion version - only admin has edit access, others have view access')
+      return {
+        success: true,
+        reviewVersion
+      }
     } catch (error) {
       console.error('Failed to finalize document:', error)
       throw error
@@ -483,6 +799,12 @@ export const useGoogleDrive = () => {
     updatePermission,
     removePermission,
     transferOwnership,
+    
+    // Versioning methods
+    createNamedVersion,
+    getVersionHistory,
+    getTaskVersions,
+    openVersionHistory,
     
     // Task flow methods
     createStudentCopy,

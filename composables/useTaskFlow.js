@@ -1,5 +1,5 @@
 // Global state (singleton pattern)
-const globalCurrentStep = ref('teacher_add_doc')
+const globalCurrentStep = ref('author_add_doc')
 const globalSelectedDoc = ref(null)
 const globalTaskData = ref({
   id: 'task-001',
@@ -9,6 +9,7 @@ const globalTaskData = ref({
   originalDocUrl: null,
   studentCopyId: null,
   studentCopyUrl: null,
+  authorEmail: 'author@example.com',
   studentEmail: 'student@example.com',
   teacherEmail: 'teacher@example.com',
   status: 'draft',
@@ -24,8 +25,8 @@ export const useTaskFlow = () => {
 
   // Flow steps
   const steps = {
-    TEACHER_ADD_DOC: 'teacher_add_doc',
-    TEACHER_PREVIEW: 'teacher_preview', 
+    AUTHOR_ADD_DOC: 'author_add_doc',
+    AUTHOR_PREVIEW: 'author_preview',
     STUDENT_START: 'student_start',
     STUDENT_WORKING: 'student_working',
     STUDENT_COMPLETE: 'student_complete',
@@ -50,7 +51,7 @@ export const useTaskFlow = () => {
     selectedDoc.value = doc
     taskData.value.originalDocId = doc.id
     taskData.value.originalDocUrl = doc.url
-    nextStep(steps.TEACHER_PREVIEW)
+    nextStep(steps.AUTHOR_PREVIEW)
   }
 
   const createStudentPreview = () => {
@@ -118,7 +119,7 @@ export const useTaskFlow = () => {
   }
 
   const resetFlow = () => {
-    currentStep.value = steps.TEACHER_ADD_DOC
+    currentStep.value = steps.AUTHOR_ADD_DOC
     selectedDoc.value = null
     taskData.value = {
       id: 'task-001',
@@ -128,6 +129,7 @@ export const useTaskFlow = () => {
       originalDocUrl: null,
       studentCopyId: null,
       studentCopyUrl: null,
+      authorEmail: 'author@example.com',
       studentEmail: 'student@example.com',
       teacherEmail: 'teacher@example.com',
       status: 'draft',
@@ -140,24 +142,24 @@ export const useTaskFlow = () => {
   // Helper to get current step info
   const getStepInfo = () => {
     const stepInfo = {
-      [steps.TEACHER_ADD_DOC]: {
+      [steps.AUTHOR_ADD_DOC]: {
         title: 'Add Document',
-        description: 'Select a Google Doc for the assignment',
-        role: 'teacher'
+        description: 'Author selects a Google Doc for the assignment',
+        role: 'author'
       },
-      [steps.TEACHER_PREVIEW]: {
+      [steps.AUTHOR_PREVIEW]: {
         title: 'Preview & Setup',
-        description: 'Review document and prepare for students',
-        role: 'teacher'
+        description: 'Author reviews document and prepares for students',
+        role: 'author'
       },
       [steps.STUDENT_START]: {
         title: 'Start Assignment',
-        description: 'Begin working on the assignment',
+        description: 'Student begins working on the assignment',
         role: 'student'
       },
       [steps.STUDENT_WORKING]: {
         title: 'Working on Assignment',
-        description: 'Complete your work in the document',
+        description: 'Student completes work in the document',
         role: 'student'
       },
       [steps.STUDENT_COMPLETE]: {
@@ -167,13 +169,13 @@ export const useTaskFlow = () => {
       },
       [steps.TEACHER_REVIEW]: {
         title: 'Review Submission',
-        description: 'Review and grade student work',
+        description: 'Teacher reviews and grades student work',
         role: 'teacher'
       },
       [steps.COMPLETED]: {
         title: 'Completed',
         description: 'Assignment process finished',
-        role: 'both'
+        role: 'all'
       }
     }
     

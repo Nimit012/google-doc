@@ -10,16 +10,22 @@
             </NuxtLink>
             <div class="flex space-x-4">
               <NuxtLink 
-                to="/teacher" 
-                class="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                to="/author" 
+                class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
-                Teacher View
+                Author View
               </NuxtLink>
               <NuxtLink 
                 to="/student" 
                 class="text-gray-600 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Student View
+              </NuxtLink>
+              <NuxtLink 
+                to="/teacher" 
+                class="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Teacher View
               </NuxtLink>
             </div>
           </div>

@@ -15,7 +15,7 @@
             stepInfo.role === 'student' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
           ]"
         >
-          {{ stepInfo.role === 'student' ? 'Your Turn' : 'Waiting for Teacher' }}
+          {{ stepInfo.role === 'student' ? 'Your Turn' : 'Waiting for Others' }}
         </span>
       </div>
       <h3 class="font-medium text-gray-900 mb-1">{{ stepInfo.title }}</h3>
@@ -25,30 +25,30 @@
     <!-- Step Content -->
     <div class="space-y-6">
 
-      <!-- Waiting for Teacher Setup -->
+      <!-- Waiting for Author Setup -->
       <div 
-        v-if="currentStep === steps.TEACHER_ADD_DOC || currentStep === steps.TEACHER_PREVIEW"
+        v-if="currentStep === steps.AUTHOR_ADD_DOC || currentStep === steps.AUTHOR_PREVIEW"
         class="bg-white rounded-lg shadow-sm border p-6"
       >
         <div class="text-center py-12">
-          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-purple-600 animate-spin" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Waiting for Teacher</h3>
-          <p class="text-gray-600 mb-4">Your teacher is currently setting up the assignment.</p>
-          <p class="text-sm text-gray-500">You'll be able to start once the teacher completes the setup.</p>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Waiting for Author</h3>
+          <p class="text-gray-600 mb-4">The author is currently setting up the assignment.</p>
+          <p class="text-sm text-gray-500">You'll be able to start once the author completes the document setup.</p>
         </div>
 
         <div class="mt-6 pt-4 border-t text-center">
-          <p class="text-sm text-gray-500 mb-2">Switch to teacher view to continue the demo:</p>
+          <p class="text-sm text-gray-500 mb-2">Switch to author view to continue the demo:</p>
           <NuxtLink 
-            to="/teacher"
-            class="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium"
+            to="/author"
+            class="inline-flex items-center text-purple-600 hover:text-purple-700 text-sm font-medium"
           >
-            Go to Teacher Dashboard →
+            Go to Author Dashboard →
           </NuxtLink>
         </div>
       </div>
@@ -154,6 +154,19 @@
             </div>
           </div>
 
+          <!-- Version Information -->
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+            <div class="flex items-center space-x-2 mb-2">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span class="text-sm font-medium text-blue-800">Submission Version Created</span>
+            </div>
+            <p class="text-sm text-blue-700">
+              A named version of your document has been saved for your submission record.
+            </p>
+          </div>
+
           <p class="text-sm text-gray-500">Your editing access has been removed, but you can still view the document. Your teacher now has editing access for review.</p>
         </div>
 
@@ -180,25 +193,25 @@
           <h3 class="text-xl font-semibold text-gray-900 mb-2">Assignment Complete!</h3>
           <p class="text-gray-600 mb-6">Your teacher has reviewed and completed the assignment process.</p>
           <div class="text-left max-w-sm mx-auto mb-6">
-            <h4 class="font-medium text-gray-900 mb-2">Final Status:</h4>
+            <h4 class="font-medium text-gray-900 mb-2">Process Complete:</h4>
             <div class="space-y-2 text-sm">
               <div class="flex items-center space-x-2">
                 <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
-                <span>Work submitted</span>
+                <span>Work submitted with version saved</span>
               </div>
               <div class="flex items-center space-x-2">
                 <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
-                <span>Teacher reviewed</span>
+                <span>Teacher reviewed with final version saved</span>
               </div>
               <div class="flex items-center space-x-2">
                 <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
-                <span>Process complete</span>
+                <span>Document archived with full version history</span>
               </div>
             </div>
           </div>

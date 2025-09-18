@@ -1,9 +1,21 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-    modules: [
-      '@nuxtjs/tailwindcss'
-    ],
-
+  
+  // Add nuxt-mongoose to modules
+  modules: [
+    'nuxt-mongoose',
+    '@nuxtjs/tailwindcss'
+  ],
+  
+  // Runtime configuration for environment variables
+  runtimeConfig: {
+    // Private keys (only available on server-side)
+    mongodbUri: process.env.MONGODB_URI,
+    
+    // Public keys (exposed to client-side)
+    public: {
+      apiBase: process.env.NODE_ENV === 'production' ? 'https://your-domain.com' : 'http://localhost:3000'
+    }
+  },
+  
 })
