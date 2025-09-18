@@ -2,10 +2,10 @@
   <div class="text-center">
     <div class="max-w-[64rem] mx-auto">
       <h1 class="text-4xl font-bold text-gray-900 mb-4">
-        Google Drive Task Flow
+        Google Docs | Proof of Concept
       </h1>
       <p class="text-lg text-gray-600 mb-12">
-        Demonstration of teacher-student document workflow with Google Drive integration
+        Demonstration of teacher-student workflow for Google Docs
       </p>
 
       <!-- Role Selection -->
@@ -15,7 +15,7 @@
           to="/author"
           class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow p-6 text-left"
         >
-          <div class="flex items-center space-x-4 mb-4">
+          <div class="flex items-center space-x-4">
             <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
               <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
@@ -23,15 +23,10 @@
             </div>
             <div>
               <h3 class="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">
-                Author Dashboard
+                Author View
               </h3>
-              <p class="text-sm text-gray-600">Create and setup assignments</p>
+              <p class="text-sm text-gray-600">Create and author tasks</p>
             </div>
-          </div>
-          <div class="text-sm text-gray-500">
-            • Select Google Docs for assignments<br>
-            • Configure assignment settings<br>
-            • Prepare content for students
           </div>
         </NuxtLink>
 
@@ -40,7 +35,7 @@
           to="/student"
           class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow p-6 text-left"
         >
-          <div class="flex items-center space-x-4 mb-4">
+          <div class="flex items-center space-x-4">
             <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
               <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -48,15 +43,10 @@
             </div>
             <div>
               <h3 class="text-lg font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
-                Student Dashboard  
+                Student View  
               </h3>
-              <p class="text-sm text-gray-600">Complete assignments and submit work</p>
+              <p class="text-sm text-gray-600">Complete tasks and submit</p>
             </div>
-          </div>
-          <div class="text-sm text-gray-500">
-            • Start assigned tasks<br>
-            • Edit documents in Google Drive<br>
-            • Submit completed assignments
           </div>
         </NuxtLink>
 
@@ -65,7 +55,7 @@
           to="/teacher"
           class="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow p-6 text-left"
         >
-          <div class="flex items-center space-x-4 mb-4">
+          <div class="flex items-center space-x-4">
             <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
@@ -73,21 +63,16 @@
             </div>
             <div>
               <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                Teacher Dashboard
+                Teacher View
               </h3>
-              <p class="text-sm text-gray-600">Review and grade student submissions</p>
+              <p class="text-sm text-gray-600">Review student submissions</p>
             </div>
-          </div>
-          <div class="text-sm text-gray-500">
-            • Review student work<br>
-            • Provide feedback and grades<br>
-            • Manage document permissions
           </div>
         </NuxtLink>
       </div>
 
       <!-- Task Details -->
-      <div class="mt-8 bg-white rounded-lg shadow-sm border p-6">
+      <!-- <div class="mt-8 bg-white rounded-lg shadow-sm border p-6">
         <h2 class="text-xl font-semibold mb-4">Current Task</h2>
         <div class="text-left max-w-md mx-auto">
           <div class="space-y-2">
@@ -112,7 +97,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
