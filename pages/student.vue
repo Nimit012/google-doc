@@ -6,7 +6,7 @@
     </div>
 
     <!-- Flow Status -->
-    <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
+    <!-- <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold">Current Step</h2>
         <span 
@@ -20,7 +20,7 @@
       </div>
       <h3 class="font-medium text-gray-900 mb-1">{{ stepInfo.title }}</h3>
       <p class="text-sm text-gray-600">{{ stepInfo.description }}</p>
-    </div>
+    </div> -->
 
     <!-- Step Content -->
     <div class="space-y-6">

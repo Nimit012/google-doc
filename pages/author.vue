@@ -6,7 +6,7 @@
       </div>
   
       <!-- Flow Status -->
-      <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
+      <!-- <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold">Current Step</h2>
           <span 
@@ -21,7 +21,7 @@
         <h3 class="font-medium text-gray-900 mb-1">{{ stepInfo.title }}</h3>
         <p class="text-sm text-gray-600">{{ stepInfo.description }}</p>
       </div>
-  
+   -->
       <!-- Step Content -->
       <div class="space-y-6">
         
@@ -40,7 +40,7 @@
           v-if="currentStep === steps.STUDENT_START || currentStep === steps.STUDENT_WORKING || currentStep === steps.STUDENT_COMPLETE || currentStep === steps.TEACHER_REVIEW"
           class="bg-white rounded-lg shadow-sm border p-6"
         >
-          <h2 class="text-xl font-semibold mb-4">Assignment Progress</h2>
+          <h2 class="text-xl font-semibold mb-4">Task Progress</h2>
           
           <div class="space-y-4">
             <!-- Student Progress -->
@@ -55,7 +55,7 @@
                     ]"
                   ></div>
                   <span class="text-sm text-green-700">
-                    {{ currentStep === steps.STUDENT_START ? 'Student can now start the assignment' : 'Student has started working' }}
+                    {{ currentStep === steps.STUDENT_START ? 'Student can now start the task' : 'Student has started working' }}
                   </span>
                 </div>
                 
