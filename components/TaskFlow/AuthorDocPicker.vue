@@ -1,138 +1,113 @@
 <template>
-    <div class="space-y-6">
-      <!-- Document Selection Step -->
-      <div v-if="!confirmed" class="bg-white rounded-lg shadow-sm border p-6">
-        <h2 class="text-xl font-semibold mb-4">Add Google Document to your task</h2>
-        <!-- <p class="text-gray-600 mb-6">Choose a Google Doc from your Drive to use as the assignment template for students.</p> -->
-        
-        <DocumentPicker 
-          ref="pickerRef"
-          @document-selected="handleDocumentSelected"
-        />
-        
-        <button 
-          @click="openPicker"
-          class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors"
-        >
-          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+  <div class="space-y-6">
+    <!-- Document Selection Step -->
+    <div v-if="!confirmed" class="bg-white rounded-lg shadow-sm border p-6">
+      <h2 class="text-xl font-semibold mb-4">Add Google Document to your task</h2>
+      
+      <DocumentPicker 
+        ref="pickerRef"
+        @document-selected="handleDocumentSelected"
+      />
+      
+      <button 
+        @click="openPicker"
+        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors"
+      >
+        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+        </svg>
+        Select Google Doc
+      </button>
+    </div>
+
+    <!-- Confirmed State -->
+    <div v-if="confirmed" class="bg-white rounded-lg shadow-sm border p-6">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
           </svg>
-          Select Google Doc
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Assignment Ready</h3>
+          <p class="text-sm text-gray-600">{{ selectedDocument?.name }} is ready for students</p>
+        </div>
+      </div>
+      
+      <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+        <p class="text-sm text-green-700">
+          Students will receive a copy of this document when they start their assignment. 
+          The assignment is now available for students to begin work.
+        </p>
+      </div>
+
+      <!-- Quick actions for confirmed state -->
+      <div class="flex space-x-3">
+        <button 
+          @click="previewDocument"
+          class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors"
+        >
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+          </svg>
+          Preview Document
+        </button>
+        <button 
+          @click="resetSelection"
+          class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors"
+        >
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Choose Different Document
         </button>
       </div>
-  
-      <!-- Confirmed State -->
-      <div v-if="confirmed" class="bg-white rounded-lg shadow-sm border p-6">
-        <div class="flex items-center space-x-3 mb-4">
-          <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-          </div>
-          <div>
-            <h3 class="text-lg font-semibold text-gray-900">Assignment Ready</h3>
-            <p class="text-sm text-gray-600">{{ selectedDocument?.name }} is ready for students</p>
-          </div>
-        </div>
-        
-        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-          <p class="text-sm text-green-700">
-            Students will receive a copy of this document when they start their assignment. 
-            The assignment is now available for students to begin work.
-          </p>
-        </div>
-  
-        <!-- Quick actions for confirmed state -->
-        <div class="flex space-x-3">
-          <button 
-            @click="previewDocument"
-            class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors"
-          >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-            </svg>
-            Preview Document
-          </button>
-          <button 
-            @click="resetSelection"
-            class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors"
-          >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-            </svg>
-            Choose Different Document
-          </button>
-        </div>
-      </div>
-  
-      <!-- Confirmation Modal -->
-      <DocumentConfirmationModal
-        :show="showModal"
-        :document="selectedDocument || {}"
-        @close="closeModal"
-        @confirm="handleConfirmation"
-        @select-different="handleSelectDifferent"
-      />
     </div>
-  </template>
-  
-  <script setup>
-  import DocumentPicker from '../GoogleDrive/DocumentPicker.vue'
-  import DocumentConfirmationModal from './DocumentConfirmationModal.vue'
-  
-  const emit = defineEmits(['document-confirmed'])
-  
-  // Component state
-  const selectedDocument = ref(null)
-  const confirmed = ref(false)
-  const showModal = ref(false)
-  const pickerRef = ref(null)
-  
-  const openPicker = () => {
-    pickerRef.value?.handleAuthClick()
+  </div>
+</template>
+
+<script setup>
+import DocumentPicker from '../GoogleDrive/DocumentPicker.vue'
+
+const emit = defineEmits(['document-confirmed'])
+
+// Component state
+const selectedDocument = ref(null)
+const confirmed = ref(false)
+const pickerRef = ref(null)
+
+const openPicker = () => {
+  pickerRef.value?.handleAuthClick()
+}
+
+// Handle document selected directly (no modal needed)
+const handleDocumentSelected = (docData) => {
+  console.log('Document selected:', docData)
+  selectedDocument.value = docData
+  confirmed.value = true
+  // Emit immediately since we're not using a modal
+  emit('document-confirmed', docData)
+}
+
+const resetSelection = () => {
+  selectedDocument.value = null
+  confirmed.value = false
+  console.log('🔄 AuthorDocPicker: Reset selection called')
+}
+
+const previewDocument = () => {
+  if (selectedDocument.value?.url) {
+    window.open(selectedDocument.value.url, '_blank')
   }
-  
-  const handleDocumentSelected = (docData) => {
-    console.log('Document selected:', docData)
-    console.log('Setting showModal to true')
-    selectedDocument.value = docData
-    showModal.value = true
-    console.log('showModal is now:', showModal.value)
-  }
-  
-  const handleConfirmation = (docData) => {
-    console.log('Document confirmed:', docData)
-    confirmed.value = true
-    showModal.value = false
-    emit('document-confirmed', docData)
-  }
-  
-  const closeModal = () => {
-    showModal.value = false
-  }
-  
-  const handleSelectDifferent = () => {
-    selectedDocument.value = null
-    confirmed.value = false
-    showModal.value = false
-  }
-  
-  const resetSelection = () => {
-    selectedDocument.value = null
-    confirmed.value = false
-  }
-  
-  const previewDocument = () => {
-    if (selectedDocument.value?.url) {
-      window.open(selectedDocument.value.url, '_blank')
-    }
-  }
-  
-  // Expose methods for parent component
-  defineExpose({
-    resetSelection,
-    getSelectedDocument: () => selectedDocument.value,
-    isConfirmed: () => confirmed.value
-  })
-  </script>
+}
+
+// Expose methods for parent component
+defineExpose({
+  resetSelection,
+  getSelectedDocument: () => selectedDocument.value,
+  isConfirmed: () => confirmed.value,
+  // Add the triggerPicker method that calls the DocumentPicker's handleAuthClick
+  triggerPicker: openPicker
+})
+</script>

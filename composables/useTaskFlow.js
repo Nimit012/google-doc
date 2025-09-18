@@ -48,10 +48,31 @@ export const useTaskFlow = () => {
 
   // Actions for each step with Google Drive integration
   const selectDocument = (doc) => {
+    if (doc === null) {
+      // Handle null case - reset document selection
+      selectedDoc.value = null
+      taskData.value.originalDocId = null
+      taskData.value.originalDocUrl = null
+      taskData.value.metadata = null
+      // Stay in AUTHOR_ADD_DOC step for re-selection
+      nextStep(steps.AUTHOR_ADD_DOC)
+      return
+    }
+
+    // Handle valid document selection
     selectedDoc.value = doc
     taskData.value.originalDocId = doc.id
     taskData.value.originalDocUrl = doc.url
     nextStep(steps.AUTHOR_PREVIEW)
+  }
+
+  // Add a specific method to clear document selection
+  const clearDocumentSelection = () => {
+    selectedDoc.value = null
+    taskData.value.originalDocId = null
+    taskData.value.originalDocUrl = null
+    taskData.value.metadata = null
+    nextStep(steps.AUTHOR_ADD_DOC)
   }
 
   const createStudentPreview = () => {
@@ -223,6 +244,7 @@ export const useTaskFlow = () => {
     // Flow control methods
     nextStep,
     selectDocument,
+    clearDocumentSelection,
     createStudentPreview,
     startStudentTask,
     markStudentComplete,

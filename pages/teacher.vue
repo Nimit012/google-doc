@@ -1,26 +1,10 @@
 <template>
   <div>
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Teacher Dashboard</h1>
-      <p class="text-gray-600">Manage assignments and review student work</p>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Teacher View</h1>
+      <p class="text-gray-600">Review Student Submissions</p>
     </div>
 
-    <!-- Flow Status -->
-    <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold">Current Step</h2>
-        <span 
-          :class="[
-            'px-3 py-1 rounded-full text-sm font-medium',
-            stepInfo.role === 'teacher' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
-          ]"
-        >
-          {{ stepInfo.role === 'teacher' ? 'Your Turn' : 'Waiting for Student' }}
-        </span>
-      </div>
-      <h3 class="font-medium text-gray-900 mb-1">{{ stepInfo.title }}</h3>
-      <p class="text-sm text-gray-600">{{ stepInfo.description }}</p>
-    </div>
 
     <!-- Step Content -->
     <div class="space-y-6">

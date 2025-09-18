@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Student Dashboard</h1>
-      <p class="text-gray-600">Access your assignments and submit completed work</p>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Student View</h1>
+      <p class="text-gray-600">Complete tasks and submit</p>
     </div>
 
     <!-- Flow Status -->
