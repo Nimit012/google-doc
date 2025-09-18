@@ -2,7 +2,7 @@
     <div>
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">Author Dashboard</h1>
-        <p class="text-gray-600">Create and setup assignments for students</p>
+        <p class="text-gray-600">Create and author tasks</p>
       </div>
   
       <!-- Flow Status -->
@@ -99,7 +99,7 @@
   
           <div class="mt-6 pt-4 border-t">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+              <div v-if="currentStep === steps.STUDENT_START" >
                 <p class="text-sm text-gray-500 mb-2">Student can continue work:</p>
                 <NuxtLink 
                   to="/student"
@@ -108,7 +108,7 @@
                   Go to Student Dashboard →
                 </NuxtLink>
               </div>
-              <div>
+              <div v-if="currentStep === steps.TEACHER_REVIEW">
                 <p class="text-sm text-gray-500 mb-2">Teacher can review work:</p>
                 <NuxtLink 
                   to="/teacher"
