@@ -7,27 +7,55 @@
 
     <!-- Step Content -->
     <div class="space-y-6">
-
       <!-- Waiting for Author Setup -->
-      <div 
-        v-if="currentStep === steps.AUTHOR_ADD_DOC || currentStep === steps.AUTHOR_PREVIEW"
+      <div
+        v-if="
+          currentStep === steps.AUTHOR_ADD_DOC ||
+          currentStep === steps.AUTHOR_PREVIEW
+        "
         class="bg-white rounded-lg shadow-sm border p-6"
       >
         <div class="text-center py-12">
-          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-purple-600 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <div
+            class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <svg
+              class="w-8 h-8 text-purple-600 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Waiting for Author</h3>
-          <p class="text-gray-600 mb-4">The author is currently setting up the assignment.</p>
-          <p class="text-sm text-gray-500">You'll be able to start once the author completes the document setup.</p>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            Waiting for Author
+          </h3>
+          <p class="text-gray-600 mb-4">
+            The author is currently setting up the assignment.
+          </p>
+          <p class="text-sm text-gray-500">
+            You'll be able to start once the author completes the document
+            setup.
+          </p>
         </div>
 
         <div class="mt-6 pt-4 border-t text-center">
-          <p class="text-sm text-gray-500 mb-2">Switch to author view to continue the demo:</p>
-          <NuxtLink 
+          <p class="text-sm text-gray-500 mb-2">
+            Switch to author view to continue the demo:
+          </p>
+          <NuxtLink
             to="/author"
             class="inline-flex items-center text-purple-600 hover:text-purple-700 text-sm font-medium"
           >
@@ -37,9 +65,10 @@
       </div>
 
       <!-- Hidden StudentDocLauncher for functionality -->
-      <div v-if="currentStep === steps.STUDENT_START" style="display: none;">
+      <div v-if="currentStep === steps.STUDENT_START" style="display: none">
         <StudentDocLauncher
           ref="studentDocLauncherRef"
+          :master-doc-id="taskData.masterCopyId"
           :original-doc-id="taskData.originalDocId"
           :task-title="taskData.title"
           :task-description="taskData.description"
@@ -50,206 +79,377 @@
       </div>
 
       <!-- Document Preview Section - Show from student start onwards -->
-      <div 
-        v-if="currentStep === steps.STUDENT_START || currentStep === steps.STUDENT_WORKING || currentStep === steps.STUDENT_COMPLETE || currentStep === steps.TEACHER_REVIEW || currentStep === steps.COMPLETED"
+      <div
+        v-if="
+          currentStep === steps.STUDENT_START ||
+          currentStep === steps.STUDENT_WORKING ||
+          currentStep === steps.STUDENT_COMPLETE ||
+          currentStep === steps.TEACHER_REVIEW ||
+          currentStep === steps.COMPLETED
+        "
         class="bg-white rounded-lg shadow-sm border"
       >
- 
-
         <!-- Content Area -->
         <div class="p-6">
           <!-- Rich Text Block -->
           <div class="mb-6">
-            <h3 class="text-sm text-gray-500 mb-2">Segment 1: Study Guide</h3>
             <div class="py-3">
-              <h2 class="text-lg font-medium text-gray-900 mb-3">Block 1: Rich Text</h2>
               <blockquote class="text-gray-800 leading-relaxed">
-                "We shall fight on the beaches, we shall fight on the landing grounds, we shall fight in the fields and in the streets, we shall fight in the hills; we shall never surrender."
+                "We shall fight on the beaches, we shall fight on the landing
+                grounds, we shall fight in the fields and in the streets, we
+                shall fight in the hills; we shall never surrender."
               </blockquote>
             </div>
           </div>
 
           <!-- Google Document Block -->
           <div>
-            <div class="flex items-center justify-between mb-4">
-  <h3 class="text-lg font-medium text-gray-900">Block 2: Activity - Google Document</h3>
-  <button 
-    @click="openDocumentPreview"
-    class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-  >
-    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-    </svg>
-    Open Preview
-  </button>
-</div>
             <div class="bg-white rounded-lg">
               <div class="flex items-start space-x-4 mb-4">
                 <div class="flex-shrink-0">
-                  <h4 class="mb-2">Using the materials included, complete the activities in the Google Document below</h4>
-                  
+                  <h4 class="mb-2">
+                    Using the materials included, complete the activities in the
+                    Google Document below
+                  </h4>
+
                   <!-- Document thumbnail or fallback -->
-                  <div v-if="selectedDoc?.thumbnailLink" class="w-[10rem] h-[12rem] border border-gray-200 rounded overflow-hidden bg-gray-50">
-                    <img 
-                      :src="selectedDoc.thumbnailLink" 
+                  <div
+                    v-if="selectedDoc?.thumbnailLink"
+                    class="w-[10rem] h-[12rem] border border-gray-200 rounded overflow-hidden bg-gray-50"
+                  >
+                    <img
+                      :src="selectedDoc.thumbnailLink"
                       :alt="selectedDoc.name || taskData.title"
                       class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
                       referrerpolicy="no-referrer"
                       @click="openStudentDocument"
-                    >
+                    />
                   </div>
-                  
+
                   <!-- Fallback when no thumbnail -->
-                  <div v-else class="w-[10rem] h-[12rem] bg-blue-50 border border-blue-200 rounded flex flex-col items-center justify-center cursor-pointer hover:bg-blue-100 transition-colors" @click="openStudentDocument">
-                    <svg class="w-10 h-10 text-blue-500 mb-2" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                  <div
+                    v-else
+                    class="w-[10rem] h-[12rem] bg-blue-50 border border-blue-200 rounded flex flex-col items-center justify-center cursor-pointer hover:bg-blue-100 transition-colors"
+                    @click="openStudentDocument"
+                  >
+                    <svg
+                      class="w-10 h-10 text-blue-500 mb-2"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"
+                      />
                     </svg>
-                    <span class="text-xs text-blue-600 text-center px-2">{{ taskData.title || 'Assignment Document' }}</span>
+                    <span class="text-xs text-blue-600 text-center px-2">{{
+                      taskData.title || "Assignment Document"
+                    }}</span>
+                  </div>
+
+                  <div class="flex items-center justify-between my-4">
+                    <button
+                      @click="openDocumentPreview"
+                      class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    >
+                      <svg
+                        class="w-4 h-4 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        ></path>
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        ></path>
+                      </svg>
+                      Open Preview
+                    </button>
                   </div>
                 </div>
               </div>
 
               <!-- Status and Action Area -->
               <div class="space-y-4">
-                
-   
-
-                <!-- Document Link (for working and later states) -->
-                <div v-if="currentStep !== steps.STUDENT_START" class="flex items-center justify-between p-4 border rounded-lg">
-                  <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 class="font-medium text-gray-900">{{ taskData.title }} - Student Copy</h3>
-                      <p class="text-sm text-gray-600">
-                        Google Docs • 
-                        <span v-if="currentStep === steps.STUDENT_WORKING">Editing enabled</span>
-                        <span v-else-if="currentStep === steps.STUDENT_COMPLETE || currentStep === steps.TEACHER_REVIEW">Submitted for review</span>
-                        <span v-else>Completed</span>
-                      </p>
-                    </div>
-                  </div>
-                  <button 
-                    @click="openStudentDocument"
-                    class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                  >
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                    </svg>
-                    Open Document
-                  </button>
-                </div>
-
+           
                 <!-- Action Buttons Area -->
                 <div class="border-t pt-4">
                   <!-- Student Start - Start Assignment Button -->
-                  <div v-if="currentStep === steps.STUDENT_START" class="flex items-center space-x-4">
-                    <button 
+                  <div
+                    v-if="currentStep === steps.STUDENT_START"
+                    class="flex items-center space-x-4"
+                  >
+                    <button
                       @click="handleStartAssignment"
                       :disabled="isStartingAssignment"
                       class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <svg v-if="!isStartingAssignment" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h2m4 0h2M9 7a3 3 0 00-3 3v8a2 2 0 002 2h8a2 2 0 002-2V10a3 3 0 00-3-3H9z"></path>
+                      <svg
+                        v-if="!isStartingAssignment"
+                        class="w-4 h-4 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h2m4 0h2M9 7a3 3 0 00-3 3v8a2 2 0 002 2h8a2 2 0 002-2V10a3 3 0 00-3-3H9z"
+                        ></path>
                       </svg>
-                      <svg v-else class="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg
+                        v-else
+                        class="w-4 h-4 mr-2 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          class="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"
+                        ></circle>
+                        <path
+                          class="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
-                      {{ isStartingAssignment ? 'Creating Copy...' : 'Start' }}
+                      {{ isStartingAssignment ? "Creating Copy..." : "Start" }}
                     </button>
                     <span class="text-sm text-gray-500">
-                      {{ isStartingAssignment ? 'Creating your working copy...' : 'Click to create your working copy and begin' }}
+                      {{
+                        isStartingAssignment
+                          ? "Creating your working copy..."
+                          : "Click to create your working copy and begin"
+                      }}
                     </span>
                   </div>
 
                   <!-- Student Working - Mark Complete Button -->
-                  <div v-else-if="currentStep === steps.STUDENT_WORKING" class="flex items-center space-x-4">
-                    <button 
+                  <div
+                    v-else-if="currentStep === steps.STUDENT_WORKING"
+                    class="flex items-center space-x-4"
+                  >
+                    <button
                       @click="markComplete"
                       :disabled="isMarkingComplete"
                       class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <svg v-if="!isMarkingComplete" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      <svg
+                        v-if="!isMarkingComplete"
+                        class="w-4 h-4 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        ></path>
                       </svg>
-                      <svg v-else class="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 818-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg
+                        v-else
+                        class="w-4 h-4 mr-2 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          class="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"
+                        ></circle>
+                        <path
+                          class="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 818-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
-                      {{ isMarkingComplete ? 'Submitting...' : 'Mark as Complete' }}
+                      {{
+                        isMarkingComplete ? "Submitting..." : "Mark as Complete"
+                      }}
                     </button>
                     <span class="text-sm text-gray-500">
-                      {{ isMarkingComplete ? 'Transferring to teacher for review...' : 'Click when you\'ve finished your work' }}
+                      {{
+                        isMarkingComplete
+                          ? "Transferring to teacher for review..."
+                          : "Click when you've finished your work"
+                      }}
                     </span>
                   </div>
 
                   <!-- Student Complete/Teacher Review - Status Display -->
-                  <div v-else-if="currentStep === steps.STUDENT_COMPLETE || currentStep === steps.TEACHER_REVIEW">
+                  <div
+                    v-else-if="
+                      currentStep === steps.STUDENT_COMPLETE ||
+                      currentStep === steps.TEACHER_REVIEW
+                    "
+                  >
                     <div class="text-center py-4">
-                      <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      <div
+                        class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3"
+                      >
+                        <svg
+                          class="w-6 h-6 text-green-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"
+                          ></path>
                         </svg>
                       </div>
-                      <h4 class="font-medium text-gray-900 mb-2">Assignment Submitted!</h4>
-                      <p class="text-sm text-gray-600 mb-4">Your work has been submitted successfully and is now waiting for teacher review.</p>
-                      
-                      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                      <h4 class="font-medium text-gray-900 mb-2">
+                        Assignment Submitted!
+                      </h4>
+                      <p class="text-sm text-gray-600 mb-4">
+                        Your work has been submitted successfully and is now
+                        waiting for teacher review.
+                      </p>
+
+                      <div
+                        class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4"
+                      >
                         <div class="flex items-center justify-center space-x-2">
-                          <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                          <svg
+                            class="w-4 h-4 text-yellow-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                            ></path>
                           </svg>
                           <span class="text-sm font-medium text-yellow-800">
-                            {{ currentStep === steps.STUDENT_COMPLETE ? 'Waiting for teacher review' : 'Teacher is reviewing your work' }}
+                            {{
+                              currentStep === steps.STUDENT_COMPLETE
+                                ? "Waiting for teacher review"
+                                : "Teacher is reviewing your work"
+                            }}
                           </span>
                         </div>
                       </div>
 
-                      <p class="text-xs text-gray-500">Your editing access has been removed, but you can still view the document. Your teacher now has editing access for review.</p>
+                      <p class="text-xs text-gray-500">
+                        Your editing access has been removed, but you can still
+                        view the document. Your teacher now has editing access
+                        for review.
+                      </p>
                     </div>
                   </div>
 
                   <!-- Completed - Final Status -->
                   <div v-else-if="currentStep === steps.COMPLETED">
                     <div class="text-center py-4">
-                      <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      <div
+                        class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3"
+                      >
+                        <svg
+                          class="w-6 h-6 text-green-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"
+                          ></path>
                         </svg>
                       </div>
-                      <h4 class="font-medium text-gray-900 mb-2">Assignment Complete!</h4>
-                      <p class="text-sm text-gray-600 mb-4">Your teacher has reviewed and completed the assignment process.</p>
-                      
+                      <h4 class="font-medium text-gray-900 mb-2">
+                        Assignment Complete!
+                      </h4>
+                      <p class="text-sm text-gray-600 mb-4">
+                        Your teacher has reviewed and completed the assignment
+                        process.
+                      </p>
+
                       <div class="text-left max-w-sm mx-auto mb-4">
-                        <h5 class="text-xs font-medium text-gray-700 mb-2">Process Complete:</h5>
+                        <h5 class="text-xs font-medium text-gray-700 mb-2">
+                          Process Complete:
+                        </h5>
                         <div class="space-y-1 text-xs text-gray-600">
                           <div class="flex items-center space-x-2">
-                            <svg class="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            <svg
+                              class="w-3 h-3 text-green-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M5 13l4 4L19 7"
+                              ></path>
                             </svg>
                             <span>Work submitted with version saved</span>
                           </div>
                           <div class="flex items-center space-x-2">
-                            <svg class="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            <svg
+                              class="w-3 h-3 text-green-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M5 13l4 4L19 7"
+                              ></path>
                             </svg>
-                            <span>Teacher reviewed with final version saved</span>
+                            <span
+                              >Teacher reviewed with final version saved</span
+                            >
                           </div>
                           <div class="flex items-center space-x-2">
-                            <svg class="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            <svg
+                              class="w-3 h-3 text-green-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M5 13l4 4L19 7"
+                              ></path>
                             </svg>
-                            <span>Document archived with full version history</span>
+                            <span
+                              >Document archived with full version history</span
+                            >
                           </div>
                         </div>
                       </div>
-                      
-                      <button 
+
+                      <button
                         @click="resetFlow"
                         class="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                       >
@@ -264,10 +464,18 @@
         </div>
 
         <!-- Navigation Links -->
-        <div v-if="currentStep === steps.STUDENT_COMPLETE || currentStep === steps.TEACHER_REVIEW" class="px-6 pb-6">
+        <div
+          v-if="
+            currentStep === steps.STUDENT_COMPLETE ||
+            currentStep === steps.TEACHER_REVIEW
+          "
+          class="px-6 pb-6"
+        >
           <div class="pt-4 border-t text-center">
-            <p class="text-sm text-gray-500 mb-2">Switch to teacher view to continue the demo:</p>
-            <NuxtLink 
+            <p class="text-sm text-gray-500 mb-2">
+              Switch to teacher view to continue the demo:
+            </p>
+            <NuxtLink
               to="/teacher"
               class="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium"
             >
@@ -281,105 +489,148 @@
 </template>
 
 <script setup>
-import StudentDocLauncher from '~/components/TaskFlow/StudentDocLauncher.vue'
+import StudentDocLauncher from "~/components/TaskFlow/StudentDocLauncher.vue";
 
-const { 
-  currentStep, 
-  taskData, 
+const {
+  currentStep,
+  taskData,
   selectedDoc,
-  steps, 
+  steps,
   startStudentTask,
   markStudentComplete,
   resetFlow,
   getStepInfo,
-  openStudentDocument
-} = useTaskFlow()
+  openStudentDocument,
+} = useTaskFlow();
 
-const stepInfo = computed(() => getStepInfo())
+const stepInfo = computed(() => getStepInfo());
 
 // Loading states
-const isMarkingComplete = ref(false)
-const isStartingAssignment = ref(false)
+const isMarkingComplete = ref(false);
+const isStartingAssignment = ref(false);
 
 // Refs
-const studentDocLauncherRef = ref(null)
+const studentDocLauncherRef = ref(null);
 
 // Debug watcher
-watch(currentStep, (newStep, oldStep) => {
-  console.log(`🎓 Student component detected step change: ${oldStep} → ${newStep}`)
-}, { immediate: true })
+watch(
+  currentStep,
+  (newStep, oldStep) => {
+    console.log(
+      `🎓 Student component detected step change: ${oldStep} → ${newStep}`
+    );
+  },
+  { immediate: true }
+);
 
 // Also watch the raw value
-watch(() => currentStep.value, (newVal) => {
-  console.log(`🎓 Student component - currentStep.value changed to: ${newVal}`)
-}, { immediate: true })
+watch(
+  () => currentStep.value,
+  (newVal) => {
+    console.log(
+      `🎓 Student component - currentStep.value changed to: ${newVal}`
+    );
+  },
+  { immediate: true }
+);
 
 const handleStartAssignment = async () => {
-  if (isStartingAssignment.value) return
-  
+  if (isStartingAssignment.value) return;
+
   isStartingAssignment.value = true;
   openStudentDocument();
-  
+
   try {
     // Trigger the StudentDocLauncher to start the assignment
-    if (studentDocLauncherRef.value && studentDocLauncherRef.value.startAssignment) {
-      await studentDocLauncherRef.value.startAssignment()
+    if (
+      studentDocLauncherRef.value &&
+      studentDocLauncherRef.value.startAssignment
+    ) {
+      await studentDocLauncherRef.value.startAssignment();
     } else {
       // Fallback: call the methods directly if exposed
-      console.log('Starting assignment manually...')
+      console.log("Starting assignment manually...");
       // You might need to implement this logic here if StudentDocLauncher doesn't expose the method
     }
   } catch (error) {
-    console.error('Failed to start assignment:', error)
+    console.error("Failed to start assignment:", error);
   } finally {
-    isStartingAssignment.value = false
+    isStartingAssignment.value = false;
   }
-}
+};
 
 const handleAssignmentStarted = (assignmentData) => {
-  console.log('Assignment started:', assignmentData)
-  isStartingAssignment.value = false
+  console.log("Assignment started:", assignmentData);
+  isStartingAssignment.value = false;
   // The StudentDocLauncher has already opened the document
   // Just update our flow state
-  startStudentTask(assignmentData)
-}
+  startStudentTask(assignmentData);
+};
 
 const handleCopyCreated = (copyData) => {
-  console.log('Document copy created:', copyData)
-  isStartingAssignment.value = false
+  console.log("Document copy created:", copyData);
+  isStartingAssignment.value = false;
   // Store copy information in task flow
-  startStudentTask(copyData)
-}
-
+  startStudentTask(copyData);
+};
 
 const openDocumentPreview = () => {
-  if (selectedDoc.value?.url) {
-    window.open(selectedDoc.value.url, '_blank')
-  } else if (taskData.originalDocUrl) {
-    window.open(taskData.originalDocUrl, '_blank')
-  } else {
-    console.warn('No document URL available for preview')
+  // Before assignment starts: show master copy for preview
+  if (currentStep.value === steps.STUDENT_START) {
+    if (taskData.masterCopyUrl) {
+      window.open(taskData.masterCopyUrl, "_blank");
+    } else if (selectedDoc.value?.url) {
+      window.open(selectedDoc.value.url, "_blank");
+    } else {
+      console.warn("No master copy URL available for preview");
+    }
+  } 
+  // After assignment starts: show student working copy
+  else if (currentStep.value === steps.STUDENT_WORKING || 
+           currentStep.value === steps.STUDENT_COMPLETE || 
+           currentStep.value === steps.TEACHER_REVIEW || 
+           currentStep.value === steps.COMPLETED) {
+    if (taskData.value.studentCopyUrl) {
+      console.log("taskData.studentCopyUrl",taskData.studentCopyUrl)
+      window.open(taskData.value.studentCopyUrl, "_blank");
+    } else {
+      console.warn("No student copy URL available for preview");
+    }
+  }
+  // Fallback
+  else {
+    console.warn("No document URL available for preview");
   }
 }
 
+
+
+
+
+
+
+
+
 const markComplete = async () => {
-  if (isMarkingComplete.value) return
-  
-  isMarkingComplete.value = true
-  console.log('Updating permissions: removing edit access, keeping view access...')
-  
+  if (isMarkingComplete.value) return;
+
+  isMarkingComplete.value = true;
+  console.log(
+    "Updating permissions: removing edit access, keeping view access..."
+  );
+
   try {
-    await markStudentComplete()
+    await markStudentComplete();
   } catch (error) {
-    console.error('Failed to mark assignment complete:', error)
+    console.error("Failed to mark assignment complete:", error);
     // You might want to show an error message to the user here
   } finally {
-    isMarkingComplete.value = false
+    isMarkingComplete.value = false;
   }
-}
+};
 
 // Debug mounted
 onMounted(() => {
-  console.log('🎓 Student component mounted, currentStep:', currentStep.value)
-})
+  console.log("🎓 Student component mounted, currentStep:", currentStep.value);
+});
 </script>

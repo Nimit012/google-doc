@@ -87,12 +87,27 @@ const handleAuthClick = async () => {
 }
 
 async function createPicker() {
+  // Create a documents view with MIME type filtering
+  const docsView = new window.google.picker.DocsView(window.google.picker.ViewId.DOCS)
+    .setMimeTypes([
+      'application/vnd.google-apps.document',  // Google Docs
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+      'application/msword'  // .doc (older Word format)
+    ].join(','))
+
+  // Create folders view for navigation (optional but useful)
+  const foldersView = new window.google.picker.DocsView(window.google.picker.ViewId.FOLDERS)
+    .setSelectFolderEnabled(false) // Don't allow selecting folders, just navigation
+
   const picker = new window.google.picker.PickerBuilder()
-    .addView(window.google.picker.ViewId.DOCS)
+    .addView(docsView)
+    .addView(foldersView)
     .setOAuthToken(accessToken.value)
     .setDeveloperKey(API_KEY)
     .setCallback(pickerCallback)
+    .setTitle('Select a Document') // Optional: custom title
     .build()
+  
   picker.setVisible(true)
 }
 

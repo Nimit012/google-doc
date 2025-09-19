@@ -515,25 +515,7 @@
                 <h3 class="text-lg font-medium text-gray-900">
                   Block 2: Activity - Google Document
                 </h3>
-                <button
-                v-if="!documentSaved"
-                  @click="toggleDocumentActions"
-                  class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                    ></path>
-                  </svg>
-                </button>
+             
               </div>
 
               <div class="bg-white rounded-lg">
@@ -579,8 +561,7 @@
                   </div>
                 </div>
 
-                <!-- Document Actions - Only show when showDocumentActions is true -->
-                <div v-if="showDocumentActions" class="pt-4 mb-4">
+                <div  class="pt-4 mb-4">
                   <div class="flex items-center justify-between">
                     <div class="flex space-x-3">
                       <a
@@ -933,7 +914,6 @@ const {
 const showDropdown = ref(false);
 const showActivitySelector = ref(false);
 const authorDocPickerRef = ref(null);
-const showDocumentActions = ref(false);
 const documentSaved = ref(false);
 
 
@@ -1024,10 +1004,6 @@ const changeDocument = () => {
 const makeAvailableToStudent = () => {
   documentSaved.value = true;
   createStudentPreview();
-};
-
-const toggleDocumentActions = () => {
-  showDocumentActions.value = !showDocumentActions.value;
 };
 
 const viewVersionHistory = () => {

@@ -1,16 +1,21 @@
 // Global state (singleton pattern)
 const globalCurrentStep = ref('author_add_doc')
 const globalSelectedDoc = ref(null)
+
+
+
 const globalTaskData = ref({
   id: 'task-001',
-  title: 'Essay Assignment',
+  title: 'Essay Assignment', 
   description: 'Write a 500-word essay on your chosen topic',
-  originalDocId: null,
+  originalDocId: null,        // Original selected document
   originalDocUrl: null,
-  studentCopyId: null,
+  masterCopyId: null,         // Master copy for assignments  
+  masterCopyUrl: null,
+  studentCopyId: null,        // Student working copy
   studentCopyUrl: null,
   authorEmail: 'author@example.com',
-  studentEmail: 'student@example.com',
+  studentEmail: 'student@example.com', 
   teacherEmail: 'teacher@example.com',
   status: 'draft',
   createdAt: new Date().toISOString(),
@@ -47,37 +52,52 @@ export const useTaskFlow = () => {
   }
 
   // Actions for each step with Google Drive integration
-  const selectDocument = (doc) => {
-    if (doc === null) {
-      // Handle null case - reset document selection
-      selectedDoc.value = null
-      taskData.value.originalDocId = null
-      taskData.value.originalDocUrl = null
-      taskData.value.metadata = null
-      // Stay in AUTHOR_ADD_DOC step for re-selection
-      nextStep(steps.AUTHOR_ADD_DOC)
-      return
-    }
+ 
 
-    // Handle valid document selection
-    selectedDoc.value = doc
-    taskData.value.originalDocId = doc.id
-    taskData.value.originalDocUrl = doc.url
-    nextStep(steps.AUTHOR_PREVIEW)
-  }
 
-  // Add a specific method to clear document selection
-  const clearDocumentSelection = () => {
+
+
+
+
+
+  // Update selectDocument method
+const selectDocument = (doc) => {
+  if (doc === null) {
+    // Handle null case - reset document selection
     selectedDoc.value = null
     taskData.value.originalDocId = null
     taskData.value.originalDocUrl = null
+    taskData.value.masterCopyId = null
+    taskData.value.masterCopyUrl = null
     taskData.value.metadata = null
     nextStep(steps.AUTHOR_ADD_DOC)
+    return
   }
+
+  // Handle valid document selection with master copy
+  selectedDoc.value = doc
+  taskData.value.originalDocId = doc.originalId || doc.id
+  taskData.value.originalDocUrl = doc.originalUrl || doc.url
+  taskData.value.masterCopyId = doc.masterCopyId || doc.id  // Use master copy as primary
+  taskData.value.masterCopyUrl = doc.masterCopyUrl || doc.url
+  nextStep(steps.AUTHOR_PREVIEW)
+}
+
+  // Add a specific method to clear document selection
+const clearDocumentSelection = () => {
+  selectedDoc.value = null
+  taskData.value.originalDocId = null
+  taskData.value.originalDocUrl = null
+  taskData.value.masterCopyId = null
+  taskData.value.masterCopyUrl = null
+  taskData.value.metadata = null
+  nextStep(steps.AUTHOR_ADD_DOC)
+}
 
   const createStudentPreview = () => {
     nextStep(steps.STUDENT_START)
   }
+
 
   const startStudentTask = async (copyData) => {
     // Update task data with copy information
@@ -258,6 +278,6 @@ export const useTaskFlow = () => {
     openOriginalDocument,
     getDocumentForReview,
     updateTaskInfo,
-    updateUserEmails
+    updateUserEmails,
   }
 }

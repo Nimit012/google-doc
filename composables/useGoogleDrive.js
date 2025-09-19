@@ -223,7 +223,7 @@ export const useGoogleDrive = () => {
   }
 
   // Document Copying and Permissions
-  const copyDocument = async (originalFileId, newFileName, targetUserEmail = null) => {
+  const copyDocument = async (originalFileId, newFileName, targetUserEmail = null, targetUserRole = 'writer') => {
     const originalMetadata = await getDocumentMetadata(originalFileId)
     
     const copyRequestBody = {
@@ -231,7 +231,7 @@ export const useGoogleDrive = () => {
       parents: originalMetadata.parents || undefined,
       description: `Copy of ${originalMetadata.name} - Created on ${new Date().toISOString()}`
     }
-
+  
     const copyResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${originalFileId}/copy`, {
       method: 'POST',
       headers: {
@@ -240,24 +240,24 @@ export const useGoogleDrive = () => {
       },
       body: JSON.stringify(copyRequestBody)
     })
-
+  
     if (!copyResponse.ok) {
       const err = await copyResponse.json()
       console.error('Error copying document:', err)
       throw err
     }
-
+  
     const copiedDoc = await copyResponse.json()
     console.log('Document copied successfully:', copiedDoc)
-
+  
     // Transfer ownership to admin
     await transferOwnership(copiedDoc.id, ADMIN_EMAIL)
-
-    // Grant access to target user if specified
+  
+    // Grant access to target user with specified role if provided
     if (targetUserEmail) {
-      await assignPermission(copiedDoc.id, targetUserEmail, 'writer')
+      await assignPermission(copiedDoc.id, targetUserEmail, targetUserRole)
     }
-
+  
     return {
       originalMetadata,
       copiedDoc,
@@ -647,7 +647,8 @@ export const useGoogleDrive = () => {
   const createStudentCopy = async (originalDocId, studentEmail, taskTitle) => {
     try {
       const copyName = `${taskTitle} - ${studentEmail} - ${new Date().toLocaleDateString()}`
-      const result = await copyDocument(originalDocId, copyName, studentEmail)
+      // Explicitly pass 'writer' for student copies
+      const result = await copyDocument(originalDocId, copyName, studentEmail, 'writer')
       
       // Store metadata for tracking
       const metadata = {
@@ -809,6 +810,7 @@ export const useGoogleDrive = () => {
     // Task flow methods
     createStudentCopy,
     transferToTeacher,
-    finalizeDocument
+    finalizeDocument,
+    copyDocument
   }
 }

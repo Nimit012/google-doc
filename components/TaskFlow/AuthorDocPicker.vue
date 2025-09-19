@@ -73,6 +73,9 @@ import DocumentPicker from '../GoogleDrive/DocumentPicker.vue'
 
 const emit = defineEmits(['document-confirmed', 'document-loading'])
 
+const { copyDocument } = useGoogleDrive()
+
+
 // Component state
 const selectedDocument = ref(null)
 const confirmed = ref(false)
@@ -87,18 +90,52 @@ const handleDocumentLoading = (data) => {
 
 }
 
-// Handle document selected directly (no modal needed)
-const handleDocumentSelected = (docData) => {
+// Handle document selected - now creates master copy
+const handleDocumentSelected = async (docData) => {
   console.log('Document selected:', docData)
-   if(docData) {
-    // Document processing complete
-    selectedDocument.value = docData
-    confirmed.value = true
-    emit('document-confirmed', docData)
+  if(docData) {
+    try {
+      // Show loading state while creating master copy
+      emit('document-loading', { loading: true })
+      
+         
+      const masterCopyName = `Assignment Master - ${docData.name} - ${new Date().toLocaleDateString()}`
+      
+      // Create master copy with student getting VIEW access only
+      const masterCopyResult = await copyDocument(
+        docData.id, 
+        masterCopyName,
+        'student@example.com', // Student email
+        'reader'  // View access only for master copy
+      )
+      
+      // Create enhanced document data with both original and master copy info
+      const masterDocData = {
+        ...docData,
+        // Original document info
+        originalId: docData.id,
+        originalUrl: docData.url,
+        originalName: docData.name,
+        // Master copy info (this becomes the new primary document)
+        id: masterCopyResult.copiedDoc.id,
+        url: `https://docs.google.com/document/d/${masterCopyResult.copiedDoc.id}/edit`,
+        name: masterCopyResult.copiedDoc.name,
+        masterCopyId: masterCopyResult.copiedDoc.id,
+        masterCopyUrl: `https://docs.google.com/document/d/${masterCopyResult.copiedDoc.id}/edit`
+      }
+      
+      selectedDocument.value = masterDocData
+      confirmed.value = true
+      emit('document-confirmed', masterDocData)
+      
+    } catch (error) {
+      console.error('Failed to create master copy:', error)
+      alert('Failed to create master copy. Please try again.')
+      // Reset loading state
+      emit('document-loading', { loading: false })
+    }
   }
 }
-
-
 
 const resetSelection = () => {
   selectedDocument.value = null
