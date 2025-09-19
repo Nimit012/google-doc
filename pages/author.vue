@@ -9,11 +9,15 @@
     <div class="space-y-6">
       
       <!-- Single Document Header for all steps -->
-      <div class="bg-white rounded-lg shadow-sm border">
+      <div class="bg-white rounded-lg shadow-sm border"
+      v-if="![steps.STUDENT_START, steps.STUDENT_WORKING, steps.STUDENT_COMPLETE, steps.TEACHER_REVIEW, steps.COMPLETED].includes(currentStep)" 
+      >
         <!-- Document Header -->
         <div class="p-6 pb-0">
           <!-- Header -->
-          <div class="flex items-center space-x-3 pb-4 border-b">
+          <div 
+            class="flex items-center space-x-3 pb-4 border-b"
+          >
             <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
               <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
             </svg>
