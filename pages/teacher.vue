@@ -22,8 +22,8 @@
             </svg>
           </div>
           <h3 class="text-lg font-semibold text-gray-900 mb-2">Waiting for Author</h3>
-          <p class="text-gray-600 mb-4">The author is currently setting up the assignment document.</p>
-          <p class="text-sm text-gray-500">You'll be able to review student work once they complete their assignments.</p>
+          <p class="text-gray-600 mb-4">The author is currently setting up the task.</p>
+          <p class="text-sm text-gray-500">You'll be able to review student work once they complete their tasks.</p>
         </div>
 
         <div class="mt-6 pt-4 border-t text-center">

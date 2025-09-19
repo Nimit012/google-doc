@@ -43,7 +43,7 @@
             Waiting for Author
           </h3>
           <p class="text-gray-600 mb-4">
-            The author is currently setting up the assignment.
+            The author is currently setting up the task.
           </p>
           <p class="text-sm text-gray-500">
             You'll be able to start once the author completes the document
