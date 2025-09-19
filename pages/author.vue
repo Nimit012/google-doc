@@ -27,7 +27,7 @@
                 Metadata
               </button>
               <button class="py-3 text-sm font-medium text-green-600 border-b-2 border-green-600">
-                Segments (2)
+                Segments (1)
               </button>
               <button class="py-3 text-sm font-medium text-gray-500 hover:text-gray-700">
                 Student Preview
