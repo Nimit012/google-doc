@@ -11,19 +11,34 @@
             <div class="flex space-x-4">
               <NuxtLink 
                 to="/author" 
-                class="text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                :class="[
+                  'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                  $route.path === '/author' 
+                    ? 'text-purple-600 bg-purple-50 border-b-2 border-purple-600' 
+                    : 'text-gray-600 hover:text-purple-600'
+                ]"
               >
                 Author View
               </NuxtLink>
               <NuxtLink 
                 to="/student" 
-                class="text-gray-600 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                :class="[
+                  'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                  $route.path === '/student' 
+                    ? 'text-green-600 bg-green-50 border-b-2 border-green-600' 
+                    : 'text-gray-600 hover:text-green-600'
+                ]"
               >
                 Student View
               </NuxtLink>
               <NuxtLink 
                 to="/teacher" 
-                class="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                :class="[
+                  'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                  $route.path === '/teacher' 
+                    ? 'text-blue-600 bg-blue-50 border-b-2 border-blue-600' 
+                    : 'text-gray-600 hover:text-blue-600'
+                ]"
               >
                 Teacher View
               </NuxtLink>

@@ -7,7 +7,7 @@
 <script setup>
 // Removed DocumentModal import
 
-const emit = defineEmits(['document-selected'])
+const emit = defineEmits(['document-selected', 'document-loading'])
 
 // Component state - removed modal-related refs
 const pickerInited = ref(false)
@@ -103,6 +103,9 @@ async function pickerCallback(data) {
       const doc = data[window.google.picker.Response.DOCUMENTS]?.[0]
       if (doc) {
         try {
+          // Emit loading start immediately when doc is selected
+          emit('document-loading', { loading: true })
+          
           const thumbnailLink = await fetchThumbnail(doc.id)
           const permissions = await listPermissions(doc.id)
           console.log("permissions", permissions)

@@ -7,6 +7,7 @@
       <DocumentPicker 
         ref="pickerRef"
         @document-selected="handleDocumentSelected"
+        @document-loading="handleDocumentLoading"
       />
       
       <button 
@@ -70,7 +71,7 @@
 <script setup>
 import DocumentPicker from '../GoogleDrive/DocumentPicker.vue'
 
-const emit = defineEmits(['document-confirmed'])
+const emit = defineEmits(['document-confirmed', 'document-loading'])
 
 // Component state
 const selectedDocument = ref(null)
@@ -81,14 +82,23 @@ const openPicker = () => {
   pickerRef.value?.handleAuthClick()
 }
 
+const handleDocumentLoading = (data) => {
+  emit('document-loading', { loading: true })
+
+}
+
 // Handle document selected directly (no modal needed)
 const handleDocumentSelected = (docData) => {
   console.log('Document selected:', docData)
-  selectedDocument.value = docData
-  confirmed.value = true
-  // Emit immediately since we're not using a modal
-  emit('document-confirmed', docData)
+   if(docData) {
+    // Document processing complete
+    selectedDocument.value = docData
+    confirmed.value = true
+    emit('document-confirmed', docData)
+  }
 }
+
+
 
 const resetSelection = () => {
   selectedDocument.value = null
