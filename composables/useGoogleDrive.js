@@ -82,6 +82,31 @@ export const useGoogleDrive = () => {
     })
   }
 
+  const getRevisionExportLinks = async (fileId, revisionId) => {
+    try {
+      const response = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${fileId}/revisions/${revisionId}?fields=*`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken.value}`
+          }
+        }
+      )
+  
+      if (!response.ok) {
+        throw new Error(`Failed to get revision export links: ${response.statusText}`)
+      }
+  
+      const revisionData = await response.json()
+      console.log('Revision data with export links:', revisionData)
+      
+      return revisionData.exportLinks || {}
+    } catch (error) {
+      console.error('Error getting revision export links:', error)
+      throw error
+    }
+  }
+
   // Authentication
   const handleAuthResponse = (response) => {
     if (response.error !== undefined) {
@@ -755,58 +780,88 @@ export const useGoogleDrive = () => {
     return attempts.sort((a, b) => a.attemptNumber - b.attemptNumber)
   }
 
-  const downloadAttemptVersion = async (fileId, revisionId, fileName, format = 'pdf') => {
-    try {
-      const mimeTypes = {
-        pdf: 'application/pdf',
-        docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      }
-      
-      const mimeType = mimeTypes[format]
-      if (!mimeType) {
-        throw new Error(`Unsupported format: ${format}`)
-      }
-      
-      // Use the export endpoint with revisions parameter
-      const response = await fetch(
-        `https://www.googleapis.com/drive/v3/files/${fileId}/export?revisions=${revisionId}&mimeType=${encodeURIComponent(mimeType)}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken.value}`
-          }
+const downloadAttemptVersion = async (fileId, revisionId, fileName, format = 'pdf') => {
+  try {
+    console.log(`Downloading revision ${revisionId} as ${format}...`)
+    
+    // Get the revision data with export links
+    const response = await fetch(
+      `https://www.googleapis.com/drive/v3/files/${fileId}/revisions/${revisionId}?fields=exportLinks`,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`
         }
-      )
-      
-      if (!response.ok) {
-        throw new Error(`Download failed: ${response.statusText}`)
       }
-      
-      const blob = await response.blob()
-      
-      // Create download link
-      const url = URL.createObjectURL(blob)
-      const downloadFileName = `${fileName}.${format}`
-      
-      // Trigger download
-      const a = document.createElement('a')
-      a.href = url
-      a.download = downloadFileName
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-      
-      return { success: true, fileName: downloadFileName }
-      
-    } catch (error) {
-      console.error('Download failed:', error)
-      throw error
+    )
+
+    if (!response.ok) {
+      throw new Error(`Failed to get revision export links: ${response.statusText}`)
     }
+
+    const revisionData = await response.json()
+    
+    if (!revisionData.exportLinks) {
+      throw new Error('No export links available for this revision')
+    }
+    
+    // Map format to MIME type
+    const mimeTypeMap = {
+      pdf: 'application/pdf',
+      docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    }
+    
+    const mimeType = mimeTypeMap[format]
+    if (!mimeType) {
+      throw new Error(`Unsupported format: ${format}`)
+    }
+    
+    const exportUrl = revisionData.exportLinks[mimeType]
+    if (!exportUrl) {
+      throw new Error(`Export link not available for ${format.toUpperCase()} format`)
+    }
+    
+    console.log(`Using export URL: ${exportUrl}`)
+    
+    // Download from the revision-specific export URL
+    const downloadResponse = await fetch(exportUrl, {
+      headers: {
+        'Authorization': `Bearer ${accessToken.value}`
+      }
+    })
+    
+    if (!downloadResponse.ok) {
+      throw new Error(`Download failed: ${downloadResponse.statusText}`)
+    }
+    
+    const blob = await downloadResponse.blob()
+    
+    // Check if we actually got content
+    if (blob.size === 0) {
+      throw new Error('Downloaded file is empty')
+    }
+    
+    // Create download link
+    const url = URL.createObjectURL(blob)
+    const downloadFileName = `${fileName}.${format}`
+    
+    // Trigger download
+    const a = document.createElement('a')
+    a.href = url
+    a.download = downloadFileName
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    
+    console.log(`Successfully downloaded ${downloadFileName}`)
+    return { success: true, fileName: downloadFileName }
+    
+  } catch (error) {
+    console.error('Download failed:', error)
+    throw error
   }
-
-
-
-
+}
+  
 
 
 
