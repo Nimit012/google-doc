@@ -82,30 +82,7 @@ export const useGoogleDrive = () => {
     })
   }
 
-  const getRevisionExportLinks = async (fileId, revisionId) => {
-    try {
-      const response = await fetch(
-        `https://www.googleapis.com/drive/v3/files/${fileId}/revisions/${revisionId}?fields=*`,
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken.value}`
-          }
-        }
-      )
-  
-      if (!response.ok) {
-        throw new Error(`Failed to get revision export links: ${response.statusText}`)
-      }
-  
-      const revisionData = await response.json()
-      console.log('Revision data with export links:', revisionData)
-      
-      return revisionData.exportLinks || {}
-    } catch (error) {
-      console.error('Error getting revision export links:', error)
-      throw error
-    }
-  }
+
 
   // Authentication
   const handleAuthResponse = (response) => {
