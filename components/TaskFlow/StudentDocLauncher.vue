@@ -241,11 +241,11 @@ const props = defineProps({
   },
   taskTitle: {
     type: String,
-    default: "Assignment",
+    default: "Task",
   },
   taskDescription: {
     type: String,
-    default: "Complete the assignment in the provided document.",
+    default: "Complete the task in the provided document.",
   },
   studentEmail: {
     type: String,
@@ -339,7 +339,7 @@ const loadDocumentPreview = async () => {
   } catch (error) {
     console.error("Failed to load document preview:", error);
     previewError.value =
-      "Document preview unavailable. You can still start the assignment.";
+      "Document preview unavailable. You can still start the task.";
   } finally {
     isLoadingPreview.value = false;
   }

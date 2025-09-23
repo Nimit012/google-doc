@@ -92,7 +92,7 @@
     {
       key: steps.STUDENT_START,
       title: 'Student Start',
-      description: 'Student begins assignment',
+      description: 'Student begins task',
       role: 'student'
     },
     {
@@ -104,7 +104,7 @@
     {
       key: steps.STUDENT_COMPLETE,
       title: 'Submit Work',
-      description: 'Student completes assignment',
+      description: 'Student completes task',
       role: 'student'
     },
     {

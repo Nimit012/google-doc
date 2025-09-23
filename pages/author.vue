@@ -713,7 +713,7 @@
                   {{
                     currentStep === steps.STUDENT_WORKING
                       ? "Student is currently editing the document"
-                      : "Student has completed the assignment"
+                      : "Student has completed the task"
                   }}
                 </span>
               </div>
@@ -727,7 +727,7 @@
               >
                 <div class="w-3 h-3 rounded-full bg-green-500"></div>
                 <span class="text-sm text-green-700"
-                  >Assignment submitted with version saved</span
+                  >Task submitted with version saved</span
                 >
               </div>
             </div>
@@ -794,14 +794,14 @@
             ></path>
           </svg>
           <h3 class="text-xl font-semibold text-gray-900 mb-2">
-            Assignment Complete!
+            Task Complete!
           </h3>
           <p class="text-gray-600 mb-6">
             The entire workflow has been completed successfully with full
             version history.
           </p>
 
-          <!-- Assignment Summary -->
+          <!-- Task Summary -->
           <div
             class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6"
           >
@@ -820,13 +820,13 @@
                 ></path>
               </svg>
               <span class="text-sm font-medium text-purple-800"
-                >Assignment Summary</span
+                >Task Summary</span
               >
             </div>
             <div class="text-left text-sm text-purple-700">
               <p>
                 📝 <strong>Document Created:</strong>
-                {{ selectedDoc?.name || "Assignment Document" }}
+                {{ selectedDoc?.name || "Task Document" }}
               </p>
               <p>
                 🎓 <strong>Student Completed:</strong> Work submitted with
@@ -844,7 +844,7 @@
               @click="resetFlow"
               class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors"
             >
-              Create New Assignment
+              Create New Task
             </button>
             <button
               @click="viewVersionHistory"
@@ -904,7 +904,7 @@
               Your Task has been created and is now ready for students to begin working.
             </p>
             <p class="text-xs text-gray-400 mb-6">
-              Document: {{ selectedDoc?.name || 'Assignment Document' }}
+              Document: {{ selectedDoc?.name || 'Task Document' }}
             </p>
           </div>
           

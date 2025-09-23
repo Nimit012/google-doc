@@ -4,11 +4,11 @@ const globalSelectedDoc = ref(null)
 
 const globalTaskData = ref({
   id: 'task-001',
-  title: 'Essay Assignment', 
+  title: 'Essay Task', 
   description: 'Write a 500-word essay on your chosen topic',
   originalDocId: null,        // Original selected document
   originalDocUrl: null,
-  masterCopyId: null,         // Master copy for assignments  
+  masterCopyId: null,         // Master copy for tasks  
   masterCopyUrl: null,
   studentCopyId: null,        // Student working copy
   studentCopyUrl: null,
@@ -159,7 +159,7 @@ export const useTaskFlow = () => {
     selectedDoc.value = null
     taskData.value = {
       id: 'task-001',
-      title: 'Essay Assignment',
+      title: 'Essay Task',
       description: 'Write a 500-word essay on your chosen topic',
       originalDocId: null,
       originalDocUrl: null,
@@ -184,7 +184,7 @@ export const useTaskFlow = () => {
     const stepInfo = {
       [steps.AUTHOR_ADD_DOC]: {
         title: 'Add Document',
-        description: 'Author selects a Google Doc for the assignment',
+        description: 'Author selects a Google Doc for the task',
         role: 'author'
       },
       [steps.AUTHOR_PREVIEW]: {
@@ -193,17 +193,17 @@ export const useTaskFlow = () => {
         role: 'author'
       },
       [steps.STUDENT_START]: {
-        title: 'Start Assignment',
-        description: 'Student begins working on the assignment',
+        title: 'Start Task',
+        description: 'Student begins working on the task',
         role: 'student'
       },
       [steps.STUDENT_WORKING]: {
-        title: 'Working on Assignment',
+        title: 'Working on Task',
         description: 'Student completes work in the document',
         role: 'student'
       },
       [steps.STUDENT_COMPLETE]: {
-        title: 'Assignment Submitted',
+        title: 'Task Submitted',
         description: 'Waiting for teacher review',
         role: 'student'
       },
@@ -214,7 +214,7 @@ export const useTaskFlow = () => {
       },
       [steps.COMPLETED]: {
         title: 'Completed',
-        description: 'Assignment process finished',
+        description: 'Task process finished',
         role: 'all'
       }
     }

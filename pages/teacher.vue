@@ -95,7 +95,7 @@
             <span class="text-sm">
               {{
                 currentStep === steps.STUDENT_START
-                  ? "Student can now start the assignment"
+                  ? "Student can now start the task"
                   : "Student has started working"
               }}
             </span>
@@ -120,7 +120,7 @@
               {{
                 currentStep === steps.STUDENT_WORKING
                   ? "Student is currently editing the document"
-                  : "Student has completed the assignment"
+                  : "Student has completed the task"
               }}
             </span>
           </div>

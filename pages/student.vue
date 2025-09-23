@@ -141,8 +141,8 @@
                         d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"
                       />
                     </svg>
-                    <span class="text-xs text-blue-600 text-center px-2">{{
-                      taskData.title || "Assignment Document"
+                  <span class="text-xs text-blue-600 text-center px-2">{{
+                      taskData.title || "Task Document"
                     }}</span>
                   </div>
 
@@ -181,7 +181,7 @@
            
                 <!-- Action Buttons Area -->
                 <div class="border-t pt-4">
-                  <!-- Student Start - Start Assignment Button -->
+                  <!-- Student Start - Start Task Button -->
                   <div
                     v-if="currentStep === steps.STUDENT_START"
                     class="flex items-center space-x-4"
@@ -319,7 +319,7 @@
                         </svg>
                       </div>
                       <h4 class="font-medium text-gray-900 mb-2">
-                        Assignment Submitted!
+                        Task Submitted!
                       </h4>
                       <p class="text-sm text-gray-600 mb-4">
                         Your work has been submitted successfully and is now
@@ -382,10 +382,10 @@
                         </svg>
                       </div>
                       <h4 class="font-medium text-gray-900 mb-2">
-                        Assignment Complete!
+                        Task Complete!
                       </h4>
                       <p class="text-sm text-gray-600 mb-4">
-                        Your teacher has reviewed and completed the assignment
+                        Your teacher has reviewed and completed the task
                         process.
                       </p>
 
@@ -453,7 +453,7 @@
                         @click="resetFlow"
                         class="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                       >
-                        Try Another Assignment
+                        Try Another Task
                       </button>
                     </div>
                   </div>
@@ -512,15 +512,15 @@
           </div>
           
           <!-- Modal Content -->
-          <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">
-            Assignment Submitted Successfully!
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">
+            Task Submitted Successfully!
           </h3>
           <div class="mt-2 px-7 py-3">
             <p class="text-sm text-gray-500 mb-4">
               Your work has been submitted and is now ready for teacher review. You no longer have editing access, but you can still view the document.
             </p>
             <p class="text-xs text-gray-400 mb-6">
-              Document: {{ selectedDoc?.name || taskData?.title || 'Assignment Document' }}
+              Document: {{ selectedDoc?.name || taskData?.title || 'Task Document' }}
             </p>
           </div>
           

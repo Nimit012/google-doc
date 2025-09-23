@@ -10,7 +10,7 @@ export const useGoogleDrive = () => {
   const CLIENT_ID = '744421146988-ctts8p2ovi3nmv9qqf40d4kun3dd6l06.apps.googleusercontent.com'
   const API_KEY = 'AIzaSyDoi51hsIMIMpqBXUh6EgvqZ9qubKamgsE'
   const SCOPES = 'https://www.googleapis.com/auth/drive'
-  const ADMIN_EMAIL = 'nimit.jain@comprotechnologies.com'
+  const ADMIN_EMAIL = 'jasdeep.singh@comprotechnologies.com'
   
   const TOKEN_STORAGE_KEY = 'google_drive_access_token'
   const EXPIRY_STORAGE_KEY = 'google_drive_token_expiry'
@@ -754,7 +754,7 @@ export const useGoogleDrive = () => {
     // Sort by attempt number
     return attempts.sort((a, b) => a.attemptNumber - b.attemptNumber)
   }
-  
+
   const downloadAttemptVersion = async (fileId, revisionId, fileName, format = 'pdf') => {
     try {
       const mimeTypes = {
@@ -767,8 +767,9 @@ export const useGoogleDrive = () => {
         throw new Error(`Unsupported format: ${format}`)
       }
       
+      // Use the export endpoint with revisions parameter
       const response = await fetch(
-        `https://www.googleapis.com/drive/v3/files/${fileId}/export?mimeType=${encodeURIComponent(mimeType)}`,
+        `https://www.googleapis.com/drive/v3/files/${fileId}/export?revisions=${revisionId}&mimeType=${encodeURIComponent(mimeType)}`,
         {
           headers: {
             'Authorization': `Bearer ${accessToken.value}`
@@ -802,9 +803,6 @@ export const useGoogleDrive = () => {
       throw error
     }
   }
-
-
-
 
 
 

@@ -3,7 +3,7 @@
     <!-- Document Selection Step -->
     <div v-if="!selectedDocument" class="bg-white rounded-lg shadow-sm border p-6">
       <h2 class="text-xl font-semibold mb-4">Select Google Document</h2>
-      <p class="text-gray-600 mb-6">Choose a Google Doc from your Drive to use as the assignment template.</p>
+      <p class="text-gray-600 mb-6">Choose a Google Doc from your Drive to use as the task template.</p>
       
       <DocumentPicker 
         ref="pickerRef"
@@ -102,13 +102,13 @@
         </div>
         <div>
           <h3 class="text-lg font-semibold text-gray-900">Document Ready</h3>
-          <p class="text-sm text-gray-600">{{ selectedDocument.name }} is ready for student assignments</p>
+          <p class="text-sm text-gray-600">{{ selectedDocument.name }} is ready for student tasks</p>
         </div>
       </div>
       
       <div class="bg-green-50 border border-green-200 rounded-lg p-4">
         <p class="text-sm text-green-700">
-          Students will receive a copy of this document when they start their assignment. 
+          Students will receive a copy of this document when they start their task. 
           You can now proceed to create the student preview.
         </p>
       </div>

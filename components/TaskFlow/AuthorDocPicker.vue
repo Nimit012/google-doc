@@ -30,15 +30,15 @@
           </svg>
         </div>
         <div>
-          <h3 class="text-lg font-semibold text-gray-900">Assignment Ready</h3>
+          <h3 class="text-lg font-semibold text-gray-900">Task Ready</h3>
           <p class="text-sm text-gray-600">{{ selectedDocument?.name }} is ready for students</p>
         </div>
       </div>
       
       <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
         <p class="text-sm text-green-700">
-          Students will receive a copy of this document when they start their assignment. 
-          The assignment is now available for students to begin work.
+          Students will receive a copy of this document when they start their task. 
+          The task is now available for students to begin work.
         </p>
       </div>
 
@@ -99,7 +99,7 @@ const handleDocumentSelected = async (docData) => {
       emit('document-loading', { loading: true })
       
          
-      const masterCopyName = `Assignment Master - ${docData.name} - ${new Date().toLocaleDateString()}`
+      const masterCopyName = `Task Master - ${docData.name} - ${new Date().toLocaleDateString()}`
       
       // Create master copy with student getting VIEW access only
       const masterCopyResult = await copyDocument(
