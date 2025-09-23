@@ -3,7 +3,7 @@ export default defineNuxtConfig({
   
   // Add nuxt-mongoose to modules
   modules: [
-    'nuxt-mongoose',
+    // 'nuxt-mongoose',
     '@nuxtjs/tailwindcss'
   ],
   
