@@ -672,29 +672,160 @@ export const useGoogleDrive = () => {
     }
   }
 
+
+
+
+
+  const getCurrentRevisionId = async (fileId) => {
+    try {
+      const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/revisions`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`
+        }
+      })
+  
+      if (!response.ok) {
+        throw new Error('Failed to get revisions')
+      }
+  
+      const data = await response.json()
+      const revisions = data.revisions || []
+      
+      // Return the latest revision ID
+      if (revisions.length > 0) {
+        const latestRevision = revisions[revisions.length - 1]
+        console.log('Latest revision ID:', latestRevision.id)
+        return latestRevision.id
+      }
+      
+      return null
+    } catch (error) {
+      console.error('Error getting current revision:', error)
+      throw error
+    }
+  }
+  
+  const storeAttemptVersion = async (fileId, studentEmail) => {
+    try {
+      // Get current revision ID
+      const revisionId = await getCurrentRevisionId(fileId)
+      
+      if (!revisionId) {
+        throw new Error('No revision ID found')
+      }
+      
+      // Get existing attempts for this document
+      const existingAttempts = getStoredAttempts(fileId)
+      const attemptNumber = existingAttempts.length + 1
+      
+      // Create attempt data
+      const attemptData = {
+        attemptNumber,
+        revisionId,
+        submittedAt: new Date().toISOString(),
+        studentEmail,
+        docId: fileId
+      }
+      
+      // Store the attempt
+      const attemptKey = `attempt_${fileId}_${attemptNumber}`
+      localStorage.setItem(attemptKey, JSON.stringify(attemptData))
+      
+      console.log('Stored attempt:', attemptData)
+      return attemptData
+      
+    } catch (error) {
+      console.error('Failed to store attempt version:', error)
+      throw error
+    }
+  }
+  
+  const getStoredAttempts = (fileId) => {
+    const attempts = []
+    
+    // Find all attempts for this document
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith(`attempt_${fileId}_`)) {
+        const attemptData = JSON.parse(localStorage.getItem(key))
+        attempts.push(attemptData)
+      }
+    })
+    
+    // Sort by attempt number
+    return attempts.sort((a, b) => a.attemptNumber - b.attemptNumber)
+  }
+  
+  const downloadAttemptVersion = async (fileId, revisionId, fileName, format = 'pdf') => {
+    try {
+      const mimeTypes = {
+        pdf: 'application/pdf',
+        docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      }
+      
+      const mimeType = mimeTypes[format]
+      if (!mimeType) {
+        throw new Error(`Unsupported format: ${format}`)
+      }
+      
+      const response = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${fileId}/export?mimeType=${encodeURIComponent(mimeType)}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken.value}`
+          }
+        }
+      )
+      
+      if (!response.ok) {
+        throw new Error(`Download failed: ${response.statusText}`)
+      }
+      
+      const blob = await response.blob()
+      
+      // Create download link
+      const url = URL.createObjectURL(blob)
+      const downloadFileName = `${fileName}.${format}`
+      
+      // Trigger download
+      const a = document.createElement('a')
+      a.href = url
+      a.download = downloadFileName
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      
+      return { success: true, fileName: downloadFileName }
+      
+    } catch (error) {
+      console.error('Download failed:', error)
+      throw error
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
   const transferToTeacher = async (copiedDocId, teacherEmail, studentEmail) => {
     try {
       console.log('📋 Transferring document access from student to teacher...')
       
-      // Create submission version before changing permissions
-      const submissionTimestamp = new Date().toLocaleString('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      })
-      const submissionVersionName = `Submission ${submissionTimestamp}`
-      
-      console.log('📌 Creating submission version...')
-      const submissionVersion = await createNamedVersion(copiedDocId, submissionVersionName)
+      // Store this submission attempt BEFORE changing permissions
+      const attemptData = await storeAttemptVersion(copiedDocId, studentEmail)
       
       // Get current permissions to find student permission ID
       const permissions = await listPermissions(copiedDocId)
       const studentPermission = permissions.find(p => p.emailAddress === studentEmail && p.role === 'writer')
       
-      // Update student permission from writer to reader (more efficient than remove + add)
+      // Update student permission from writer to reader
       if (studentPermission) {
         console.log('🔄 Changing student from edit to view access...')
         await updatePermission(copiedDocId, studentPermission.id, 'reader')
@@ -708,24 +839,19 @@ export const useGoogleDrive = () => {
       console.log('✏️ Granting teacher edit access...')
       await assignPermission(copiedDocId, teacherEmail, 'writer', false)
       
-      // Update metadata
-      const metadataKey = `task_doc_${copiedDocId}`
-      const metadata = JSON.parse(localStorage.getItem(metadataKey) || '{}')
-      metadata.status = 'teacher_review'
-      metadata.transferredAt = new Date().toISOString()
-      metadata.submissionVersion = submissionVersion
-      localStorage.setItem(metadataKey, JSON.stringify(metadata))
-      
-      console.log('✅ Document access transferred successfully with submission version created')
+      console.log('✅ Document access transferred successfully with attempt stored')
       return {
         success: true,
-        submissionVersion
+        attemptData
       }
     } catch (error) {
       console.error('Failed to transfer to teacher:', error)
       throw error
     }
   }
+
+
+
 
   const finalizeDocument = async (copiedDocId, teacherEmail) => {
     try {
@@ -811,6 +937,11 @@ export const useGoogleDrive = () => {
     createStudentCopy,
     transferToTeacher,
     finalizeDocument,
-    copyDocument
+    copyDocument,
+
+    getCurrentRevisionId,
+    storeAttemptVersion,
+    getStoredAttempts,
+    downloadAttemptVersion,
   }
 }

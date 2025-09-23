@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     if (existingTasks.length === 0) {
       const sampleTask = new Task({
         id: 'task-001', // Matches your frontend default
-        title: 'Essay Assignment',
+        title: 'Essay Task',
         description: 'Write a 500-word essay on your chosen topic',
         authorEmail: 'author@example.com',
         studentEmail: 'student@example.com',

@@ -485,6 +485,64 @@
         </div>
       </div>
     </div>
+
+    <!-- Submission Success Modal -->
+    <div
+      v-if="showSubmissionModal"
+      class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+      @click="closeSubmissionModal"
+    >
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" @click.stop>
+        <div class="mt-3 text-center">
+          <!-- Success Icon -->
+          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+            <svg
+              class="h-8 w-8 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              ></path>
+            </svg>
+          </div>
+          
+          <!-- Modal Content -->
+          <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">
+            Assignment Submitted Successfully!
+          </h3>
+          <div class="mt-2 px-7 py-3">
+            <p class="text-sm text-gray-500 mb-4">
+              Your work has been submitted and is now ready for teacher review. You no longer have editing access, but you can still view the document.
+            </p>
+            <p class="text-xs text-gray-400 mb-6">
+              Document: {{ selectedDoc?.name || taskData?.title || 'Assignment Document' }}
+            </p>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="flex flex-col space-y-3 px-4 py-3">
+            <NuxtLink
+              to="/teacher"
+              @click="closeSubmissionModal"
+              class="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-center"
+            >
+              Go to Teacher View
+            </NuxtLink>
+            <button
+              @click="closeSubmissionModal"
+              class="w-full px-4 py-2 bg-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+            >
+              Stay on Student View
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -508,6 +566,9 @@ const stepInfo = computed(() => getStepInfo());
 // Loading states
 const isMarkingComplete = ref(false);
 const isStartingAssignment = ref(false);
+
+// Add submission modal state
+const showSubmissionModal = ref(false);
 
 // Refs
 const studentDocLauncherRef = ref(null);
@@ -603,14 +664,7 @@ const openDocumentPreview = () => {
   }
 }
 
-
-
-
-
-
-
-
-
+// MODIFIED METHOD: Mark complete and show modal
 const markComplete = async () => {
   if (isMarkingComplete.value) return;
 
@@ -621,6 +675,9 @@ const markComplete = async () => {
 
   try {
     await markStudentComplete();
+    
+    // Show the submission modal after successful completion
+    showSubmissionModal.value = true;
   } catch (error) {
     console.error("Failed to mark assignment complete:", error);
     // You might want to show an error message to the user here
@@ -629,8 +686,28 @@ const markComplete = async () => {
   }
 };
 
+// NEW METHOD: Close submission modal
+const closeSubmissionModal = () => {
+  showSubmissionModal.value = false;
+};
+
 // Debug mounted
 onMounted(() => {
   console.log("🎓 Student component mounted, currentStep:", currentStep.value);
+  
+  // Click outside to close modal
+  const handleClickOutside = (event) => {
+    // Close modal when clicking outside of it
+      if (showSubmissionModal.value && event.target === event.currentTarget && event.target.classList.contains('bg-opacity-50')) {
+
+      closeSubmissionModal();
+    }
+  };
+
+  document.addEventListener("click", handleClickOutside);
+
+  onBeforeUnmount(() => {
+    document.removeEventListener("click", handleClickOutside);
+  });
 });
 </script>

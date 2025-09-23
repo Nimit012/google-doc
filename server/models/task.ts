@@ -15,7 +15,7 @@ export const Task = defineMongooseModel({
     title: {
       type: String,
       required: true,
-      default: 'Essay Assignment'
+      default: 'Essay Task'
     },
     
     description: {

@@ -26,27 +26,6 @@
               WWII: Pacific and European Theaters
             </h1>
           </div>
-
-          <!-- Tab Navigation -->
-          <div class="border-b">
-            <nav class="flex space-x-8">
-              <button
-                class="py-3 text-sm font-medium text-gray-500 hover:text-gray-700"
-              >
-                Metadata
-              </button>
-              <button
-                class="py-3 text-sm font-medium text-green-600 border-b-2 border-green-600"
-              >
-                Segments (1)
-              </button>
-              <button
-                class="py-3 text-sm font-medium text-gray-500 hover:text-gray-700"
-              >
-                Student Preview
-              </button>
-            </nav>
-          </div>
         </div>
 
         <!-- Content Area -->
@@ -468,9 +447,7 @@
                   <h4 class="text-lg font-medium text-gray-900 mb-2">
                     Processing Document
                   </h4>
-                  <p class="text-sm text-gray-600 text-center">
-                    Setting up your Google Document for the assignment...
-                  </p>
+                
 
                   <!-- Progress steps -->
                   <div class="mt-6 space-y-2 text-sm text-gray-500">
@@ -892,6 +869,64 @@
         </div>
       </div>
     </div>
+
+    <!-- Success Modal -->
+    <div
+      v-if="showSuccessModal"
+      class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+      @click="closeSuccessModal"
+    >
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" @click.stop>
+        <div class="mt-3 text-center">
+          <!-- Success Icon -->
+          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+            <svg
+              class="h-8 w-8 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              ></path>
+            </svg>
+          </div>
+          
+          <!-- Modal Content -->
+          <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">
+            Task Successfully Added!
+          </h3>
+          <div class="mt-2 px-7 py-3">
+            <p class="text-sm text-gray-500 mb-4">
+              Your Task has been created and is now ready for students to begin working.
+            </p>
+            <p class="text-xs text-gray-400 mb-6">
+              Document: {{ selectedDoc?.name || 'Assignment Document' }}
+            </p>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="flex flex-col space-y-3 px-4 py-3">
+            <NuxtLink
+              to="/student"
+              @click="closeSuccessModal"
+              class="w-full px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors text-center"
+            >
+              Go to Student View
+            </NuxtLink>
+            <button
+              @click="closeSuccessModal"
+              class="w-full px-4 py-2 bg-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+            >
+              Stay on Author View
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -916,6 +951,8 @@ const showActivitySelector = ref(false);
 const authorDocPickerRef = ref(null);
 const documentSaved = ref(false);
 
+// Add success modal state
+const showSuccessModal = ref(false);
 
 const stepInfo = computed(() => getStepInfo());
 
@@ -933,6 +970,7 @@ const handleThumbnailError = (event) => {
   // You could set a flag here to show the fallback state
   // or try to refetch the thumbnail
 };
+
 // Handle final document confirmation (when loading is complete)
 const handleDocumentLoading = (data) => {
   isLoadingDocument.value = true;
@@ -1000,10 +1038,18 @@ const changeDocument = () => {
   showDropdown.value = false;
 };
 
-// NEW METHOD: Make assignment available to student
+// MODIFIED METHOD: Make assignment available to student and show modal
 const makeAvailableToStudent = () => {
   documentSaved.value = true;
   createStudentPreview();
+  
+  // Show the success modal
+  showSuccessModal.value = true;
+};
+
+// NEW METHOD: Close success modal
+const closeSuccessModal = () => {
+  showSuccessModal.value = false;
 };
 
 const viewVersionHistory = () => {
@@ -1018,8 +1064,14 @@ const viewVersionHistory = () => {
 // Click outside to close dropdown
 onMounted(() => {
   const handleClickOutside = (event) => {
-    if (showDropdown.value && !event.target.closest(".relative")) {
+    if (showDropdown.value &&  event.target === event.currentTarget && !event.target.closest(".relative")) {
+
       showDropdown.value = false;
+    }
+    
+    // Close modal when clicking outside of it
+    if (showSuccessModal.value && event.target.classList.contains('bg-opacity-50')) {
+      closeSuccessModal();
     }
   };
 

@@ -2,8 +2,6 @@
 const globalCurrentStep = ref('author_add_doc')
 const globalSelectedDoc = ref(null)
 
-
-
 const globalTaskData = ref({
   id: 'task-001',
   title: 'Essay Assignment', 
@@ -14,6 +12,8 @@ const globalTaskData = ref({
   masterCopyUrl: null,
   studentCopyId: null,        // Student working copy
   studentCopyUrl: null,
+  submissionRevisionId: null, // Revision ID at submission time
+  submissionTimestamp: null,  // When student submitted
   authorEmail: 'author@example.com',
   studentEmail: 'student@example.com', 
   teacherEmail: 'teacher@example.com',
@@ -51,19 +51,31 @@ export const useTaskFlow = () => {
     })
   }
 
-  // Actions for each step with Google Drive integration
- 
-
-
-
-
-
-
-
   // Update selectDocument method
-const selectDocument = (doc) => {
-  if (doc === null) {
-    // Handle null case - reset document selection
+  const selectDocument = (doc) => {
+    if (doc === null) {
+      // Handle null case - reset document selection
+      selectedDoc.value = null
+      taskData.value.originalDocId = null
+      taskData.value.originalDocUrl = null
+      taskData.value.masterCopyId = null
+      taskData.value.masterCopyUrl = null
+      taskData.value.metadata = null
+      nextStep(steps.AUTHOR_ADD_DOC)
+      return
+    }
+
+    // Handle valid document selection with master copy
+    selectedDoc.value = doc
+    taskData.value.originalDocId = doc.originalId || doc.id
+    taskData.value.originalDocUrl = doc.originalUrl || doc.url
+    taskData.value.masterCopyId = doc.masterCopyId || doc.id  // Use master copy as primary
+    taskData.value.masterCopyUrl = doc.masterCopyUrl || doc.url
+    nextStep(steps.AUTHOR_PREVIEW)
+  }
+
+  // Add a specific method to clear document selection
+  const clearDocumentSelection = () => {
     selectedDoc.value = null
     taskData.value.originalDocId = null
     taskData.value.originalDocUrl = null
@@ -71,33 +83,11 @@ const selectDocument = (doc) => {
     taskData.value.masterCopyUrl = null
     taskData.value.metadata = null
     nextStep(steps.AUTHOR_ADD_DOC)
-    return
   }
-
-  // Handle valid document selection with master copy
-  selectedDoc.value = doc
-  taskData.value.originalDocId = doc.originalId || doc.id
-  taskData.value.originalDocUrl = doc.originalUrl || doc.url
-  taskData.value.masterCopyId = doc.masterCopyId || doc.id  // Use master copy as primary
-  taskData.value.masterCopyUrl = doc.masterCopyUrl || doc.url
-  nextStep(steps.AUTHOR_PREVIEW)
-}
-
-  // Add a specific method to clear document selection
-const clearDocumentSelection = () => {
-  selectedDoc.value = null
-  taskData.value.originalDocId = null
-  taskData.value.originalDocUrl = null
-  taskData.value.masterCopyId = null
-  taskData.value.masterCopyUrl = null
-  taskData.value.metadata = null
-  nextStep(steps.AUTHOR_ADD_DOC)
-}
 
   const createStudentPreview = () => {
     nextStep(steps.STUDENT_START)
   }
-
 
   const startStudentTask = async (copyData) => {
     // Update task data with copy information
@@ -112,15 +102,20 @@ const clearDocumentSelection = () => {
 
   const markStudentComplete = async () => {
     try {
-      // Use Google Drive composable to transfer permissions
+      // Use Google Drive composable to transfer permissions and store attempt
       const { transferToTeacher } = useGoogleDrive()
       
       if (taskData.value.studentCopyId) {
-        await transferToTeacher(
+        const result = await transferToTeacher(
           taskData.value.studentCopyId,
           taskData.value.teacherEmail,
           taskData.value.studentEmail
         )
+        
+        // Store attempt data in taskData if needed
+        if (result.attemptData) {
+          console.log('Attempt stored:', result.attemptData)
+        }
       }
       
       taskData.value.status = 'student_complete'
@@ -168,8 +163,12 @@ const clearDocumentSelection = () => {
       description: 'Write a 500-word essay on your chosen topic',
       originalDocId: null,
       originalDocUrl: null,
+      masterCopyId: null,
+      masterCopyUrl: null,
       studentCopyId: null,
       studentCopyUrl: null,
+      submissionRevisionId: null,
+      submissionTimestamp: null,
       authorEmail: 'author@example.com',
       studentEmail: 'student@example.com',
       teacherEmail: 'teacher@example.com',
@@ -240,7 +239,13 @@ const clearDocumentSelection = () => {
     }
   }
 
+  // Updated: Teacher opens submission revision, not live document
   const getDocumentForReview = () => {
+    // If we have submission revision data, return revision URL
+    if (taskData.value.submissionRevisionId && taskData.value.studentCopyId) {
+      return `https://docs.google.com/document/d/${taskData.value.studentCopyId}/revisions/${taskData.value.submissionRevisionId}`
+    }
+    // Fallback to live document
     return taskData.value.studentCopyUrl || taskData.value.originalDocUrl
   }
 
