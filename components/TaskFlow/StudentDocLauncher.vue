@@ -229,6 +229,7 @@
 </template>
 
 <script setup>
+const { createDocument } = useDocumentManagerClient()
 const props = defineProps({
   originalDocId: {
     type: String,
@@ -394,61 +395,59 @@ const startAssignment = async () => {
   setStatus("Initializing Google Drive connection...", "info");
 
   try {
-    // Ensure Google APIs are initialized
+    // Ensure Google APIs are initialized (if you still need this)
     await initializeGoogleAPIs();
 
-    // Check authentication
+    // Authentication check
     if (!isAuthenticated()) {
       setStatus("Authenticating with Google Drive...", "info");
       await authenticate();
-
-      // Wait a bit for authentication to complete
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      if (!isAuthenticated()) {
-        throw new Error("Authentication failed. Please try again.");
-      }
+      if (!isAuthenticated()) throw new Error("Authentication failed");
     }
 
-    // Create student copy
+    // Create student copy using Document Management Service
     setStatus("Creating document copy and setting permissions...", "info");
-    const result = await createStudentCopy(
-      props.originalDocId,
-      props.studentEmail,
-      props.taskTitle
-    );
 
-    createdDocId.value = result.copiedDoc.id;
+    const copiedDoc = await createDocument(
+      props.originalDocId, // teacher's original document
+      "sarah.admin@greydls.com",      // admin email
+      `${props.taskTitle} - ${props.studentEmail}`,
+      acc,
+     [
+        { user: "emma.student@greydls.com", access_level: 'read_write' }, // student can edit
+       
+      ],
+    );
 
     setStatus("Document ready! Opening in new tab...", "success");
 
-    // Open document in new tab
-    const docUrl = `https://docs.google.com/document/d/${result.copiedDoc.id}/edit`;
+    // Open the student's copy
+    const docUrl = copiedDoc.storage_reference || `https://docs.google.com/document/d/${copiedDoc.id}/edit`;
     window.open(docUrl, "_blank");
 
-    // Emit events
+    // Emit events back to parent
     emit("copy-created", {
       originalDocId: props.originalDocId,
-      copiedDocId: result.copiedDoc.id,
+      copiedDocId: copiedDoc.id,
       docUrl: docUrl,
-      metadata: result.metadata,
+      metadata: copiedDoc.metadata,
     });
 
     emit("assignment-started", {
-      copiedDocId: result.copiedDoc.id,
+      copiedDocId: copiedDoc.id,
       docUrl: docUrl,
     });
 
-    console.log("Assignment started successfully:", result);
+    console.log("Assignment started successfully:", copiedDoc);
   } catch (error) {
     console.error("Failed to start assignment:", error);
 
     let errorMessage = "Failed to create document copy. Please try again.";
-
-    if (error.message.includes("not initialized")) {
+    if (error.message?.includes("not initialized")) {
       errorMessage =
         "Google Drive connection not ready. Please refresh the page and try again.";
-    } else if (error.message.includes("Authentication")) {
+    } else if (error.message?.includes("Authentication")) {
       errorMessage =
         "Authentication failed. Please check your Google account permissions.";
     }

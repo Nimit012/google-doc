@@ -971,22 +971,33 @@ const handleThumbnailError = (event) => {
   // or try to refetch the thumbnail
 };
 
-// Handle final document confirmation (when loading is complete)
-const handleDocumentLoading = (data) => {
-  isLoadingDocument.value = true;
-};
 
 // Handle document confirmation from AuthorDocPicker
-const handleDocumentConfirmed = (docData) => {
-  if (docData) {
-    isLoadingDocument.value = false;
+const handleDocumentLoading = (data) => {
+  isLoadingDocument.value = data.loading !== false;  // Set to true only if loading is not explicitly false
+};
 
+
+const handleDocumentConfirmed = (docData) => {
+  if (!docData) {
+    console.warn("Document data is empty");
+    isLoadingDocument.value = false; // Ensure loading is turned off even if no data
+    return;
+  }
+
+  try {
     console.log("Author confirmed document for assignment:", docData);
     selectDocument(docData);
+     isLoadingDocument.value = false; // Ensure loading is turned off even if no data
 
-    // Reset UI state - hide activity selector since we have a document
+    // Reset UI state
     showActivitySelector.value = false;
     showDropdown.value = false;
+  } catch (error) {
+    console.error("Error in handleDocumentConfirmed:", error);
+  } finally {
+    // This ensures the loader is always turned off
+    isLoadingDocument.value = false;
   }
 };
 
