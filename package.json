@@ -10,15 +10,20 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.11.2",
+    "document-management-service": "github:Nimit012/document-management-service",
+    "dotenv": "^17.2.3",
     "mongoose": "^8.18.1",
     "nuxt": "^4.1.2",
     "nuxt-mongoose": "^1.0.6",
+    "pinia": "^3.0.3",
     "vue": "^3.5.21",
     "vue-router": "^4.5.1"
   },
   "packageManager": "pnpm@10.11.1+sha512.e519b9f7639869dc8d5c3c5dfef73b3f091094b0a006d7317353c72b124e80e1afd429732e28705ad6bfa1ee879c1fce46c128ccebd3192101f43dd67c667912",
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.14.0",
+    "@types/node": "^24.9.1",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
     "tailwindcss": "3.4.14"
