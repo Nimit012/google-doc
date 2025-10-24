@@ -10,7 +10,7 @@ export const useGoogleDrive = () => {
   const CLIENT_ID = '744421146988-ctts8p2ovi3nmv9qqf40d4kun3dd6l06.apps.googleusercontent.com'
   const API_KEY = 'AIzaSyDoi51hsIMIMpqBXUh6EgvqZ9qubKamgsE'
   const SCOPES = 'https://www.googleapis.com/auth/drive'
-  const ADMIN_EMAIL = 'jasdeep.singh@comprotechnologies.com'
+  const ADMIN_EMAIL = 'niharika.budhiraja@comprotechnologies.com'
   
   const TOKEN_STORAGE_KEY = 'google_drive_access_token'
   const EXPIRY_STORAGE_KEY = 'google_drive_token_expiry'

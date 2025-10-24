@@ -14,5 +14,10 @@
     {
       "path": "./.nuxt/tsconfig.node.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "types": ["node"], 
+    "moduleResolution": "node",
+    "esModuleInterop": true
+  }
 }
