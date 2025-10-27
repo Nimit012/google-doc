@@ -636,33 +636,50 @@ const handleCopyCreated = (copyData) => {
 };
 
 const openDocumentPreview = () => {
+  const data = taskData.value;
+  console.log("Task Data:", data);
+
+  // Helper to normalize Drive URLs (handles file IDs or full links)
+  const buildDocUrl = (idOrUrl) => {
+    if (!idOrUrl) return null;
+    // If it's already a full URL, return as-is
+    if (idOrUrl.startsWith("http")) return idOrUrl;
+    // Otherwise, treat it as a file ID
+    return `https://docs.google.com/document/d/${idOrUrl}/edit`;
+  };
+
   // Before assignment starts: show master copy for preview
   if (currentStep.value === steps.STUDENT_START) {
-    if (taskData.masterCopyUrl) {
-      window.open(taskData.masterCopyUrl, "_blank");
-    } else if (selectedDoc.value?.url) {
-      window.open(selectedDoc.value.url, "_blank");
+    const url =
+      buildDocUrl(data.masterCopyUrl) ||
+      buildDocUrl(selectedDoc.value?.url);
+    if (url) {
+      window.open(url, "_blank");
     } else {
       console.warn("No master copy URL available for preview");
     }
-  } 
+  }
+
   // After assignment starts: show student working copy
-  else if (currentStep.value === steps.STUDENT_WORKING || 
-           currentStep.value === steps.STUDENT_COMPLETE || 
-           currentStep.value === steps.TEACHER_REVIEW || 
-           currentStep.value === steps.COMPLETED) {
-    if (taskData.value.studentCopyUrl) {
-      console.log("taskData.studentCopyUrl",taskData.studentCopyUrl)
-      window.open(taskData.value.studentCopyUrl, "_blank");
+  else if (
+    [steps.STUDENT_WORKING, steps.STUDENT_COMPLETE, steps.TEACHER_REVIEW, steps.COMPLETED]
+      .includes(currentStep.value)
+  ) {
+    const url = buildDocUrl(data.studentCopyUrl);
+    if (url) {
+      console.log("Opening student copy:", url);
+      window.open(url, "_blank");
     } else {
       console.warn("No student copy URL available for preview");
     }
   }
+
   // Fallback
   else {
     console.warn("No document URL available for preview");
   }
-}
+};
+
 
 // MODIFIED METHOD: Mark complete and show modal
 const markComplete = async () => {
