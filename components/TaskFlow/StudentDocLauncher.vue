@@ -410,14 +410,14 @@ const startAssignment = async () => {
     setStatus("Creating document copy and setting permissions...", "info");
 
     const copiedDoc = await createDocument(
-      props.originalDocId, // teacher's original document
-      "sarah.admin@greydls.com",      // admin email
-      `${props.taskTitle} - ${props.studentEmail}`,
-      acc,
-     [
-        { user: "emma.student@greydls.com", access_level: 'read_write' }, // student can edit
+      {
+        sourceFileId: props.originalDocId, // teacher's original document
+        name: `${props.taskTitle} - ${props.studentEmail}`,
+        accessControl: [
+          { user: "emma.student@greydls.com", access_level: 'read_write' }, // student can edit
        
       ],
+    }
     );
 
     setStatus("Document ready! Opening in new tab...", "success");

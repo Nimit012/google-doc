@@ -1,8 +1,8 @@
 export const useDocumentManagerClient = () => {
-  const createDocument = async (sourceFileId: string, sourceOwner: string, name: string) => {
+  const createDocument = async (obj :{sourceFileId: string, sourceOwner: string, name: string, accessControl?: any}) => {
     return await $fetch('/api/create-document', {
       method: 'POST',
-      body: { sourceFileId, sourceOwner, name }
+      body: { ...obj }
     });
   };
 
