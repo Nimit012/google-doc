@@ -104,9 +104,11 @@ const handleDocumentSelected = async (docData) => {
       
       // Create master document
       const masterCopyResult = await createDocument(
-        docData.id,
-        'maria.teacher@greydls.com', // ✅ Teacher’s email
-        masterCopyName
+        {
+          sourceFileId: docData.id,
+          sourceOwner: 'maria.teacher@greydls.com', // ✅ Teacher’s email
+          name: masterCopyName
+        }
       )
 
       // ✅ API response is already the final document
