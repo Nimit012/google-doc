@@ -408,10 +408,14 @@ const startAssignment = async () => {
 
     // Create student copy using Document Management Service
     setStatus("Creating document copy and setting permissions...", "info");
+    console.log("props.originalDocId", props.originalDocId);
+    console.log("props.studentEmail", props.studentEmail);
+    console.log("props.taskTitle", props.taskTitle);
 
     const copiedDoc = await createDocument(
       {
         sourceFileId: props.originalDocId, // teacher's original document
+        sourceOwner: "maria.teacher@greydls.com",
         name: `${props.taskTitle} - ${props.studentEmail}`,
         accessControl: [
           { user: "emma.student@greydls.com", access_level: 'read_write' }, // student can edit
