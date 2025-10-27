@@ -744,6 +744,7 @@ const API_KEY = 'AIzaSyCSrBjSZ5HuHNMT7JPfdnm1aRXHeL5pNZM'
   }
   
   const getStoredAttempts = (fileId) => {
+    console.log("checking",fileId);
     const attempts = []
     
     // Find all attempts for this document
