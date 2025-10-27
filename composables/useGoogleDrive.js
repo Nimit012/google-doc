@@ -7,8 +7,9 @@ const globalThumbnailCache = reactive({})
 
 export const useGoogleDrive = () => {
   // Configuration
-  const CLIENT_ID = '744421146988-ctts8p2ovi3nmv9qqf40d4kun3dd6l06.apps.googleusercontent.com'
-  const API_KEY = 'AIzaSyDoi51hsIMIMpqBXUh6EgvqZ9qubKamgsE'
+const CLIENT_ID = '252920647891-4948offll57nt51sri30io4k0v8am55f.apps.googleusercontent.com'
+const API_KEY = 'AIzaSyCSrBjSZ5HuHNMT7JPfdnm1aRXHeL5pNZM'
+
   const SCOPES = 'https://www.googleapis.com/auth/drive'
   const ADMIN_EMAIL = 'niharika.budhiraja@comprotechnologies.com'
   
