@@ -415,7 +415,6 @@ const startAssignment = async () => {
     const copiedDoc = await createDocument(
       {
         sourceFileId: props.originalDocId, // teacher's original document
-        sourceOwner: "maria.teacher@greydls.com",
         name: `${props.taskTitle} - ${props.studentEmail}`,
         accessControl: [
           { user: "emma.student@greydls.com", access_level: 'read_write' }, // student can edit
@@ -426,9 +425,7 @@ const startAssignment = async () => {
 
     setStatus("Document ready! Opening in new tab...", "success");
 
-    // Open the student's copy
-    const docUrl = copiedDoc.storage_reference || `https://docs.google.com/document/d/${copiedDoc.id}/edit`;
-    window.open(docUrl, "_blank");
+   const docUrl = copiedDoc.storage_reference || `https://docs.google.com/document/d/${copiedDoc.id}/edit`;
 
     // Emit events back to parent
     emit("copy-created", {

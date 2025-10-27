@@ -208,10 +208,10 @@
                   </span>
                 </div>
                 <div class="text-sm text-gray-500 mt-1">
-                  Submitted: {{ formatAttemptTime(attempt.submittedAt) }}
+                 Created: {{ formatAttemptTime(attempt.created_at || attempt.updated_at) }}
                 </div>
                 <div class="text-xs text-gray-400">
-                  Student: {{ attempt.studentEmail }}
+                  Student: {{ attempt.name }}
                 </div>
               </div>
               <div class="flex space-x-2">
@@ -507,6 +507,7 @@ const {
 } = useTaskFlow();
 
 const { getStoredAttempts, downloadAttemptVersion } = useGoogleDrive();
+const { getDocument } = useDocumentManagerClient();
 
 // Loading states
 const isMarkingReviewed = ref(false);
@@ -518,19 +519,35 @@ const submissionAttempts = ref([]);
 
 const stepInfo = computed(() => getStepInfo());
 
-// Load attempts when component mounts or task changes
-const loadSubmissionAttempts = () => {
-  if (taskData.value.studentCopyId) {
-    submissionAttempts.value = getStoredAttempts(taskData.value.studentCopyId);
-    console.log("Loaded attempts:", submissionAttempts.value);
+// Store the current document data
+const currentDocument = ref(null);
+
+// Load document data
+const loadSubmissionAttempts = async () => {
+  try {
+    if (taskData.value?.originalDocId) {
+      console.log('Loading document with ID:', taskData.value.originalDocId);
+      const response = await getDocument(taskData.value.originalDocId);
+      console.log('Document data:', response);
+      submissionAttempts.value = response?.data || [];
+    } else {
+      console.warn('No originalDocId found in taskData');
+      submissionAttempts.value = [];
+    }
+  } catch (error) {
+    console.error('Error loading document:', error);
+    submissionAttempts.value = [];
   }
 };
 
-// Watch for changes in student copy ID
+// Watch for changes in the document ID
 watch(
-  () => taskData.studentCopyId,
-  () => {
-    loadSubmissionAttempts();
+  () => taskData.value?.originalDocId,
+  (newId) => {
+    if (newId) {
+      console.log('Document ID changed to:', newId);
+      loadSubmissionAttempts();
+    }
   },
   { immediate: true }
 );
