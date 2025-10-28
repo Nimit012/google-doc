@@ -508,6 +508,7 @@ const {
 
 const { getStoredAttempts, downloadAttemptVersion } = useGoogleDrive();
 const { getDocument , getRevisionId } = useDocumentManagerClient();
+const { getDocumentForTeacher } = useTaskFlow();
 
 // Loading states
 const isMarkingReviewed = ref(false);
@@ -526,8 +527,8 @@ const currentDocument = ref(null);
 const loadSubmissionAttempts = async () => {
   try {
     if (taskData.value?.masterCopyId) {
-      console.log('Loading document with ID:', taskData.value.masterCopyId);
-      const response = await getDocument(taskData.value.masterCopyId);
+      console.log('Loading document with ID:', taskData.value);
+      const response = await getDocumentForTeacher();
       console.log('Document data:', response);
         if (response?.data?.length > 0) {
         currentDocument.value = response.data[0];
@@ -611,6 +612,7 @@ const downloadAttempt = async (attempt, format) => {
 };
 
 const markReviewed = async () => {
+  const { setAccessControl } = useDocumentManagerClient()
   if (isMarkingReviewed.value) return;
 
   isMarkingReviewed.value = true;
@@ -618,6 +620,12 @@ const markReviewed = async () => {
 
   try {
     await markTeacherReviewed();
+    await setAccessControl(currentDocument.value.document_id, [
+      { user: 'emma.student@greydls.com', access_level:'read' },
+      { user: 'maria.teacher@greydls.com', access_level: 'read' }
+    ])
+
+    
   } catch (error) {
     console.error("Failed to mark as reviewed:", error);
   } finally {

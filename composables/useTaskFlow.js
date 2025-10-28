@@ -1,6 +1,7 @@
 // Global state (singleton pattern)
 const globalCurrentStep = ref('author_add_doc')
-const globalSelectedDoc = ref(null)
+const globalSelectedDoc = ref(null);
+const studentSelectedDoc = ref(null);
 
 const globalTaskData = ref({
   id: 'task-001',
@@ -56,10 +57,10 @@ export const useTaskFlow = () => {
     if (doc === null) {
       // Handle null case - reset document selection
       selectedDoc.value = null
-      taskData.value.originalDocId = null
-      taskData.value.originalDocUrl = null
-      taskData.value.masterCopyId = null
-      taskData.value.masterCopyUrl = null
+      taskData.value.originalDocId = doc.id
+      taskData.value.originalDocUrl = doc.url
+      taskData.value.masterCopyId = doc.id
+      taskData.value.masterCopyUrl = doc.url
       taskData.value.metadata = null
       nextStep(steps.AUTHOR_ADD_DOC)
       return
@@ -105,6 +106,7 @@ export const useTaskFlow = () => {
       console.log("marking student ",document)
       // Use Google Drive composable to transfer permissions and store attempt
     const { setAccessControl } = useDocumentManagerClient()
+    studentSelectedDoc.value = document
       
      await setAccessControl(document.originalDocId, [
       { user: 'emma.student@greydls.com', access_level: 'read' },
@@ -130,10 +132,10 @@ export const useTaskFlow = () => {
   try {
     if (!taskData.value.masterCopyId) return;
 
-    console.log('🏁 Finalizing document via Document Management Service...');
+    console.log('🏁 Finalizing document via Document Management Service...', studentSelectedDoc.value);
 
     // 1️⃣ Get the current document info
-    const response = await getDocument(taskData.value.masterCopyId);
+    const response = await getDocument(studentSelectedDoc.value.originalDocId);
     const document = response?.data?.[0]; // you wrapped single results in an array
 
     if (!document) {
@@ -160,10 +162,20 @@ export const useTaskFlow = () => {
       reviewVersion: reviewVersionName,
       reviewedBy: taskData.value.teacherEmail,
     };
+    
 
     await updateDocument(document.document_id, {
       metadata: updatedMetadata,
     });
+
+
+      
+     await setAccessControl(document.document_id, [
+      { user: 'emma.student@greydls.com', access_level: 'read' },
+      { user: 'maria.teacher@greydls.com', access_level: 'read' }
+    ])
+
+    
 
     // 4️⃣ (Optional) You can add a separate API route to modify access control if needed later
     // await $fetch('/api/set-access-control', { method: 'POST', body: { documentId: taskData.value.studentCopyId, accessControl: [...] } });
@@ -180,6 +192,12 @@ export const useTaskFlow = () => {
     nextStep(steps.COMPLETED);
   }
 };
+const getDocumentForTeacher = async () => {
+  const { getDocument } = useDocumentManagerClient();
+   const response = await getDocument(studentSelectedDoc.value.originalDocId);
+
+  return response;
+}
 
 
   const resetFlow = () => {
@@ -312,5 +330,6 @@ export const useTaskFlow = () => {
     getDocumentForReview,
     updateTaskInfo,
     updateUserEmails,
+    getDocumentForTeacher
   }
 }
