@@ -95,3 +95,21 @@ export const copyDocument = async (
 ) => {
   return await createDocument(sourceFileId, sourceOwner, newName, folderPath, accessControl, metadata);
 };
+
+export const getRevisionId = async (documentId: string) => {
+ 
+
+  // Assuming DocumentManager provides a method to fetch revisions
+  // or you can adapt this if your SDK has a different method name.
+  const revisions = await getDocManager().getRevisions(documentId);
+
+  // Return the latest revision ID (most common need)
+  if (Array.isArray(revisions) && revisions.length > 0) {
+    const latestRevision = revisions[0];
+    return latestRevision.revision_id;
+  }
+
+  console.warn(`⚠️ No revisions found for document: ${documentId}`);
+  return null;
+};
+
