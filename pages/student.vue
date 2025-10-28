@@ -572,6 +572,7 @@ const showSubmissionModal = ref(false);
 
 // Refs
 const studentDocLauncherRef = ref(null);
+const studentCopyData = ref(null);
 
 // Debug watcher
 watch(
@@ -630,6 +631,10 @@ const handleAssignmentStarted = (assignmentData) => {
 
 const handleCopyCreated = (copyData) => {
   console.log("Document copy created:", copyData);
+    studentCopyData.value = {
+    ...copyData,
+  };
+  console.log("Document copy created:", studentCopyData.value);
   isStartingAssignment.value = false;
   // Store copy information in task flow
   startStudentTask(copyData);
@@ -691,7 +696,7 @@ const markComplete = async () => {
   );
 
   try {
-    await markStudentComplete();
+    await markStudentComplete(studentCopyData.value);
     
     // Show the submission modal after successful completion
     showSubmissionModal.value = true;

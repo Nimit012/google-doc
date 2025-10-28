@@ -113,3 +113,17 @@ export const getRevisionId = async (documentId: string) => {
   return null;
 };
 
+export const setAccessControl = async (
+  documentId: string,
+  accessControl: Array<{ user: string; access_level: 'read' | 'read_write' | 'comment' }>
+) => {
+  if (!documentId || !Array.isArray(accessControl)) {
+    throw new Error('Invalid arguments: documentId and accessControl are required');
+  }
+
+
+  await getDocManager().setAccessControl(documentId, accessControl);
+  console.log(`✅ Access control updated for document: ${documentId}`);
+};
+
+

@@ -507,7 +507,7 @@ const {
 } = useTaskFlow();
 
 const { getStoredAttempts, downloadAttemptVersion } = useGoogleDrive();
-const { getDocument } = useDocumentManagerClient();
+const { getDocument , getRevisionId } = useDocumentManagerClient();
 
 // Loading states
 const isMarkingReviewed = ref(false);
@@ -525,10 +525,15 @@ const currentDocument = ref(null);
 // Load document data
 const loadSubmissionAttempts = async () => {
   try {
-    if (taskData.value?.originalDocId) {
-      console.log('Loading document with ID:', taskData.value.originalDocId);
-      const response = await getDocument(taskData.value.originalDocId);
+    if (taskData.value?.masterCopyId) {
+      console.log('Loading document with ID:', taskData.value.masterCopyId);
+      const response = await getDocument(taskData.value.masterCopyId);
       console.log('Document data:', response);
+        if (response?.data?.length > 0) {
+        currentDocument.value = response.data[0];
+      } else if (response?.data) {
+        currentDocument.value = response.data;
+      }
       submissionAttempts.value = response?.data || [];
     } else {
       console.warn('No originalDocId found in taskData');
@@ -620,14 +625,32 @@ const markReviewed = async () => {
   }
 };
 
-const viewVersionHistory = () => {
-  if (taskData.studentCopyId) {
-    const { openVersionHistory } = useGoogleDrive();
-    openVersionHistory(taskData.studentCopyId);
-  } else {
-    alert("Document not available for version history");
+const viewVersionHistory = async () => {
+  try {
+    console.log("taks data", currentDocument.value)
+    const documentId = currentDocument.value.document_id
+
+    if (!documentId) {
+      alert("No valid document ID found for version history");
+      return;
+    }
+
+    console.log("📄 Fetching revision history for document:", documentId);
+
+  const response = await getRevisionId(documentId);
+
+    if (response?.data?.revisionId) {
+      console.log("✅ Latest Revision ID:", response.data.revisionId);
+      alert(`Revision ID: ${response.data.revisionId}`);
+    } else {
+      console.warn("⚠️ No revision ID returned");
+    }
+  } catch (error) {
+    console.error("❌ Failed to fetch revision history:", error);
+    alert("Failed to load version history. Please try again.");
   }
 };
+
 
 // Load attempts when component mounts
 onMounted(() => {

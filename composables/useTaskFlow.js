@@ -100,26 +100,16 @@ export const useTaskFlow = () => {
     nextStep(steps.STUDENT_WORKING)
   }
 
-  const markStudentComplete = async () => {
+  const markStudentComplete = async (document) => {
     try {
+      console.log("marking student ",document)
       // Use Google Drive composable to transfer permissions and store attempt
-      const { transferToTeacher } = useGoogleDrive()
+    const { setAccessControl } = useDocumentManagerClient()
       
-      if (taskData.value.studentCopyId) {
-        const result = await transferToTeacher(
-          taskData.value.studentCopyId,
-          taskData.value.teacherEmail,
-          taskData.value.studentEmail
-        )
-        
-        // Store attempt data in taskData if needed
-        if (result.attemptData) {
-          console.log('Attempt stored:', result.attemptData)
-        }
-      }
-      
-      taskData.value.status = 'student_complete'
-      nextStep(steps.TEACHER_REVIEW)
+     await setAccessControl(document.originalDocId, [
+      { user: 'emma.student@greydls.com', access_level: 'read' },
+      { user: 'maria.teacher@greydls.com', access_level: 'read_write' }
+    ])
     } catch (error) {
       console.error('Failed to transfer document to teacher:', error)
       // Continue with flow even if API call fails (for demo purposes)
@@ -134,7 +124,7 @@ export const useTaskFlow = () => {
 
  
   const markTeacherReviewed = async () => {
-  const { getDocument, updateDocument } = useDocumentManagerClient();
+  const { getDocument, updateDocument , setAccessControl } = useDocumentManagerClient();
 
   try {
     if (!taskData.value.masterCopyId) return;

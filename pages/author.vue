@@ -1064,9 +1064,9 @@ const closeSuccessModal = () => {
 };
 
 const viewVersionHistory = () => {
-  if (taskData.studentCopyId) {
-    const { openVersionHistory } = useGoogleDrive();
-    openVersionHistory(taskData.studentCopyId);
+  if (taskData.value.id) {
+   
+   getRevisionId(taskData.value.id);
   } else {
     alert("Document not available for version history");
   }
