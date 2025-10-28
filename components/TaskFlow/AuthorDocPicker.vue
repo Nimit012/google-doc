@@ -152,12 +152,21 @@ const previewDocument = () => {
   }
 }
 
+const downloadAttempt = async () => {
+  const {getRevisionId} =useDocumentManagerClient();
+  const {downloadAttemptVersion} = useGoogleDrive();
+  const revisionId = await getRevisionId(selectedDocument.value.id)
+ console.log("revisionnnn" , revisionId);
+  
+}
+
 // Expose methods for parent component
 defineExpose({
   resetSelection,
   getSelectedDocument: () => selectedDocument.value,
   isConfirmed: () => confirmed.value,
   // Add the triggerPicker method that calls the DocumentPicker's handleAuthClick
-  triggerPicker: openPicker
+  triggerPicker: openPicker,
+  downloadAttempt
 })
 </script>
