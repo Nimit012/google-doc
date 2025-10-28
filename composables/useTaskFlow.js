@@ -110,6 +110,7 @@ export const useTaskFlow = () => {
       { user: 'emma.student@greydls.com', access_level: 'read' },
       { user: 'maria.teacher@greydls.com', access_level: 'read_write' }
     ])
+      nextStep(steps.TEACHER_REVIEW)
     } catch (error) {
       console.error('Failed to transfer document to teacher:', error)
       // Continue with flow even if API call fails (for demo purposes)
