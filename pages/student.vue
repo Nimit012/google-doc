@@ -122,7 +122,7 @@
                       :alt="selectedDoc.name || taskData.title"
                       class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
                       referrerpolicy="no-referrer"
-                      @click="openStudentDocument"
+                      @click="openDocumentPreview"
                     />
                   </div>
 
@@ -141,7 +141,7 @@
                         d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"
                       />
                     </svg>
-                  <span class="text-xs text-blue-600 text-center px-2">{{
+                    <span class="text-xs text-blue-600 text-center px-2">{{
                       taskData.title || "Task Document"
                     }}</span>
                   </div>
@@ -178,7 +178,6 @@
 
               <!-- Status and Action Area -->
               <div class="space-y-4">
-           
                 <!-- Action Buttons Area -->
                 <div class="border-t pt-4">
                   <!-- Student Start - Start Task Button -->
@@ -492,10 +491,15 @@
       class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
       @click="closeSubmissionModal"
     >
-      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" @click.stop>
+      <div
+        class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+        @click.stop
+      >
         <div class="mt-3 text-center">
           <!-- Success Icon -->
-          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+          <div
+            class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4"
+          >
             <svg
               class="h-8 w-8 text-green-600"
               fill="none"
@@ -510,20 +514,23 @@
               ></path>
             </svg>
           </div>
-          
+
           <!-- Modal Content -->
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">
+          <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">
             Task Submitted Successfully!
           </h3>
           <div class="mt-2 px-7 py-3">
             <p class="text-sm text-gray-500 mb-4">
-              Your work has been submitted and is now ready for teacher review. You no longer have editing access, but you can still view the document.
+              Your work has been submitted and is now ready for teacher review.
+              You no longer have editing access, but you can still view the
+              document.
             </p>
             <p class="text-xs text-gray-400 mb-6">
-              Document: {{ selectedDoc?.name || taskData?.title || 'Task Document' }}
+              Document:
+              {{ selectedDoc?.name || taskData?.title || "Task Document" }}
             </p>
           </div>
-          
+
           <!-- Action Buttons -->
           <div class="flex flex-col space-y-3 px-4 py-3">
             <NuxtLink
@@ -631,7 +638,7 @@ const handleAssignmentStarted = (assignmentData) => {
 
 const handleCopyCreated = (copyData) => {
   console.log("Document copy created:", copyData);
-    studentCopyData.value = {
+  studentCopyData.value = {
     ...copyData,
   };
   console.log("Document copy created:", studentCopyData.value);
@@ -656,8 +663,7 @@ const openDocumentPreview = () => {
   // Before assignment starts: show master copy for preview
   if (currentStep.value === steps.STUDENT_START) {
     const url =
-      buildDocUrl(data.masterCopyUrl) ||
-      buildDocUrl(selectedDoc.value?.url);
+      buildDocUrl(data.masterCopyUrl) || buildDocUrl(selectedDoc.value?.url);
     if (url) {
       window.open(url, "_blank");
     } else {
@@ -667,8 +673,12 @@ const openDocumentPreview = () => {
 
   // After assignment starts: show student working copy
   else if (
-    [steps.STUDENT_WORKING, steps.STUDENT_COMPLETE, steps.TEACHER_REVIEW, steps.COMPLETED]
-      .includes(currentStep.value)
+    [
+      steps.STUDENT_WORKING,
+      steps.STUDENT_COMPLETE,
+      steps.TEACHER_REVIEW,
+      steps.COMPLETED,
+    ].includes(currentStep.value)
   ) {
     const url = buildDocUrl(data.studentCopyUrl);
     if (url) {
@@ -685,7 +695,6 @@ const openDocumentPreview = () => {
   }
 };
 
-
 // MODIFIED METHOD: Mark complete and show modal
 const markComplete = async () => {
   if (isMarkingComplete.value) return;
@@ -697,7 +706,7 @@ const markComplete = async () => {
 
   try {
     await markStudentComplete(studentCopyData.value);
-    
+
     // Show the submission modal after successful completion
     showSubmissionModal.value = true;
   } catch (error) {
@@ -716,12 +725,15 @@ const closeSubmissionModal = () => {
 // Debug mounted
 onMounted(() => {
   console.log("🎓 Student component mounted, currentStep:", currentStep.value);
-  
+
   // Click outside to close modal
   const handleClickOutside = (event) => {
     // Close modal when clicking outside of it
-      if (showSubmissionModal.value && event.target === event.currentTarget && event.target.classList.contains('bg-opacity-50')) {
-
+    if (
+      showSubmissionModal.value &&
+      event.target === event.currentTarget &&
+      event.target.classList.contains("bg-opacity-50")
+    ) {
       closeSubmissionModal();
     }
   };

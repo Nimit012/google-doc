@@ -509,6 +509,7 @@
                       class="w-[10rem] h-[12rem] border border-gray-200 rounded overflow-hidden bg-gray-50"
                     >
                       <img
+                        @click='openPdf'
                         :src="selectedDoc.thumbnailLink"
                         :alt="selectedDoc.name"
                         class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
@@ -943,6 +944,7 @@ const {
   createStudentPreview,
   resetFlow,
   getStepInfo,
+  downloadAttempt,
 } = useTaskFlow();
 
 // New UI state
@@ -1029,6 +1031,11 @@ const selectGoogleDocument = () => {
     authorDocPickerRef.value.triggerPicker();
   }
 };
+
+const openPdf =async()=>{
+  await authorDocPickerRef.value.downloadAttempt();
+
+}
 
 const cancelActivitySelection = () => {
   showActivitySelector.value = false;

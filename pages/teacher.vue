@@ -131,8 +131,7 @@
           >
             <div class="w-3 h-3 rounded-full bg-green-500"></div>
             <span class="text-sm"
-              >Task submitted with version saved - ready for your
-              review</span
+              >Task submitted with version saved - ready for your review</span
             >
           </div>
         </div>
@@ -160,8 +159,6 @@
           The student has completed their work. Review the document and provide
           feedback.
         </p>
-
-    
 
         <!-- Student Submission Attempts Section -->
         <div class="mt-6 bg-gray-50 rounded-lg p-4">
@@ -208,7 +205,10 @@
                   </span>
                 </div>
                 <div class="text-sm text-gray-500 mt-1">
-                 Created: {{ formatAttemptTime(attempt.created_at || attempt.updated_at) }}
+                  Created:
+                  {{
+                    formatAttemptTime(attempt.created_at || attempt.updated_at)
+                  }}
                 </div>
                 <div class="text-xs text-gray-400">
                   Student: {{ attempt.name }}
@@ -218,7 +218,6 @@
                 <button
                   @click="openDocumentForReview"
                   class="inline-flex items-center px-3 py-1 border border-green-300 rounded text-sm text-green-700 hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-
                 >
                   <svg
                     class="w-4 h-4 mr-2"
@@ -390,8 +389,6 @@
           </svg>
           {{ isMarkingReviewed ? "Finalizing..." : "Mark as Reviewed" }}
         </button>
-
-     
       </div>
 
       <!-- Step 5: Completed -->
@@ -504,10 +501,10 @@ const {
   resetFlow,
   getStepInfo,
   getDocumentForReview,
+  downloadAttempt,
 } = useTaskFlow();
 
-const { getStoredAttempts, downloadAttemptVersion } = useGoogleDrive();
-const { getDocument , getRevisionId } = useDocumentManagerClient();
+const { getDocument, getRevisionId } = useDocumentManagerClient();
 const { getDocumentForTeacher } = useTaskFlow();
 
 // Loading states
@@ -527,21 +524,21 @@ const currentDocument = ref(null);
 const loadSubmissionAttempts = async () => {
   try {
     if (taskData.value?.masterCopyId) {
-      console.log('Loading document with ID:', taskData.value);
+      console.log("Loading document with ID:", taskData.value);
       const response = await getDocumentForTeacher();
-      console.log('Document data:', response);
-        if (response?.data?.length > 0) {
+      console.log("Document data:", response);
+      if (response?.data?.length > 0) {
         currentDocument.value = response.data[0];
       } else if (response?.data) {
         currentDocument.value = response.data;
       }
       submissionAttempts.value = response?.data || [];
     } else {
-      console.warn('No originalDocId found in taskData');
+      console.warn("No originalDocId found in taskData");
       submissionAttempts.value = [];
     }
   } catch (error) {
-    console.error('Error loading document:', error);
+    console.error("Error loading document:", error);
     submissionAttempts.value = [];
   }
 };
@@ -551,7 +548,7 @@ watch(
   () => taskData.value?.originalDocId,
   (newId) => {
     if (newId) {
-      console.log('Document ID changed to:', newId);
+      console.log("Document ID changed to:", newId);
       loadSubmissionAttempts();
     }
   },
@@ -582,37 +579,8 @@ const openDocumentForReview = () => {
   }
 };
 
-const downloadAttempt = async (attempt, format) => {
-  const downloadKey = `${attempt.attemptNumber}-${format}`;
-  downloadingAttempt.value = downloadKey;
-
-  try {
-    const fileName = `Attempt_${attempt.attemptNumber}_${
-      attempt.studentEmail.split("@")[0]
-    }_${attempt.submittedAt.split("T")[0]}`;
-
-    await downloadAttemptVersion(
-      attempt.docId,
-      attempt.revisionId,
-      fileName,
-      format
-    );
-
-    console.log(`Downloaded attempt ${attempt.attemptNumber} as ${format}`);
-  } catch (error) {
-    console.error("Failed to download attempt:", error);
-    alert(
-      `Failed to download attempt ${
-        attempt.attemptNumber
-      } as ${format.toUpperCase()}. Please try again.`
-    );
-  } finally {
-    downloadingAttempt.value = null;
-  }
-};
-
 const markReviewed = async () => {
-  const { setAccessControl } = useDocumentManagerClient()
+  const { setAccessControl } = useDocumentManagerClient();
   if (isMarkingReviewed.value) return;
 
   isMarkingReviewed.value = true;
@@ -621,11 +589,9 @@ const markReviewed = async () => {
   try {
     await markTeacherReviewed();
     await setAccessControl(currentDocument.value.document_id, [
-      { user: 'emma.student@greydls.com', access_level:'read' },
-      { user: 'maria.teacher@greydls.com', access_level: 'read' }
-    ])
-
-    
+      { user: "emma.student@greydls.com", access_level: "read" },
+      { user: "maria.teacher@greydls.com", access_level: "read" },
+    ]);
   } catch (error) {
     console.error("Failed to mark as reviewed:", error);
   } finally {
@@ -635,8 +601,8 @@ const markReviewed = async () => {
 
 const viewVersionHistory = async () => {
   try {
-    console.log("taks data", currentDocument.value)
-    const documentId = currentDocument.value.document_id
+    console.log("taks data", currentDocument.value);
+    const documentId = currentDocument.value.document_id;
 
     if (!documentId) {
       alert("No valid document ID found for version history");
@@ -645,7 +611,7 @@ const viewVersionHistory = async () => {
 
     console.log("📄 Fetching revision history for document:", documentId);
 
-  const response = await getRevisionId(documentId);
+    const response = await getRevisionId(documentId);
 
     if (response?.data?.revisionId) {
       console.log("✅ Latest Revision ID:", response.data.revisionId);
@@ -658,7 +624,6 @@ const viewVersionHistory = async () => {
     alert("Failed to load version history. Please try again.");
   }
 };
-
 
 // Load attempts when component mounts
 onMounted(() => {

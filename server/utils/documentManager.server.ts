@@ -106,7 +106,7 @@ export const getRevisionId = async (documentId: string) => {
   // Return the latest revision ID (most common need)
   if (Array.isArray(revisions) && revisions.length > 0) {
     const latestRevision = revisions[0];
-    return latestRevision.revision_id;
+    return latestRevision;
   }
 
   console.warn(`⚠️ No revisions found for document: ${documentId}`);
