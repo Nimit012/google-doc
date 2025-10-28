@@ -424,15 +424,16 @@ const startAssignment = async () => {
     );
 
     setStatus("Document ready! Opening in new tab...", "success");
+    console.log("copiedDoc", copiedDoc);
 
-   const docUrl = copiedDoc.storage_reference || `https://docs.google.com/document/d/${copiedDoc.id}/edit`;
-
+  const docUrl = copiedDoc.access_url || `https://docs.google.com/document/d/${copiedDoc.id}/edit`;
+    window.open(docUrl, "_blank");
     // Emit events back to parent
     emit("copy-created", {
-      originalDocId: props.originalDocId,
-      copiedDocId: copiedDoc.id,
+      originalDocId: copiedDoc.document_id,
+    
       docUrl: docUrl,
-      metadata: copiedDoc.metadata,
+  
     });
 
     emit("assignment-started", {

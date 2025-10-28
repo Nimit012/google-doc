@@ -100,26 +100,16 @@ export const useTaskFlow = () => {
     nextStep(steps.STUDENT_WORKING)
   }
 
-  const markStudentComplete = async () => {
+  const markStudentComplete = async (document) => {
     try {
+      console.log("marking student ",document)
       // Use Google Drive composable to transfer permissions and store attempt
-      const { transferToTeacher } = useGoogleDrive()
+    const { setAccessControl } = useDocumentManagerClient()
       
-      if (taskData.value.studentCopyId) {
-        const result = await transferToTeacher(
-          taskData.value.studentCopyId,
-          taskData.value.teacherEmail,
-          taskData.value.studentEmail
-        )
-        
-        // Store attempt data in taskData if needed
-        if (result.attemptData) {
-          console.log('Attempt stored:', result.attemptData)
-        }
-      }
-      
-      taskData.value.status = 'student_complete'
-      nextStep(steps.TEACHER_REVIEW)
+     await setAccessControl(document.originalDocId, [
+      { user: 'emma.student@greydls.com', access_level: 'read' },
+      { user: 'maria.teacher@greydls.com', access_level: 'read_write' }
+    ])
     } catch (error) {
       console.error('Failed to transfer document to teacher:', error)
       // Continue with flow even if API call fails (for demo purposes)
@@ -132,27 +122,64 @@ export const useTaskFlow = () => {
     nextStep(steps.TEACHER_REVIEW)
   }
 
+ 
   const markTeacherReviewed = async () => {
-    try {
-      // Use Google Drive composable to finalize document
-      const { finalizeDocument } = useGoogleDrive()
-      
-      if (taskData.value.studentCopyId) {
-        await finalizeDocument(
-          taskData.value.studentCopyId,
-          taskData.value.teacherEmail
-        )
-      }
-      
-      taskData.value.status = 'completed'
-      nextStep(steps.COMPLETED)
-    } catch (error) {
-      console.error('Failed to finalize document:', error)
-      // Continue with flow even if API call fails (for demo purposes)
-      taskData.value.status = 'completed'
-      nextStep(steps.COMPLETED)
+  const { getDocument, updateDocument , setAccessControl } = useDocumentManagerClient();
+
+  try {
+    if (!taskData.value.masterCopyId) return;
+
+    console.log('🏁 Finalizing document via Document Management Service...');
+
+    // 1️⃣ Get the current document info
+    const response = await getDocument(taskData.value.masterCopyId);
+    const document = response?.data?.[0]; // you wrapped single results in an array
+
+    if (!document) {
+      throw new Error('Document not found in DMS');
     }
+    console.log('Document found:', document);
+
+    // 2️⃣ Create a "review complete" version label in metadata
+    const reviewTimestamp = new Date().toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+    const reviewVersionName = `Review Complete ${reviewTimestamp}`;
+
+    // 3️⃣ Update the document metadata to mark as finalized
+    const updatedMetadata = {
+      ...document.metadata,
+      status: 'completed',
+      finalizedAt: new Date().toISOString(),
+      reviewVersion: reviewVersionName,
+      reviewedBy: taskData.value.teacherEmail,
+    };
+
+    await updateDocument(document.document_id, {
+      metadata: updatedMetadata,
+    });
+
+    // 4️⃣ (Optional) You can add a separate API route to modify access control if needed later
+    // await $fetch('/api/set-access-control', { method: 'POST', body: { documentId: taskData.value.studentCopyId, accessControl: [...] } });
+
+    // 5️⃣ Update local task state
+    taskData.value.status = 'completed';
+    nextStep(steps.COMPLETED);
+
+    console.log('✅ Document successfully finalized via DMS');
+  } catch (error) {
+    console.error('❌ Failed to finalize document via DMS:', error);
+    // Continue gracefully even if DMS fails
+    taskData.value.status = 'completed';
+    nextStep(steps.COMPLETED);
   }
+};
+
 
   const resetFlow = () => {
     currentStep.value = steps.AUTHOR_ADD_DOC

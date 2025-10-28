@@ -36,5 +36,23 @@ export const useDocumentManagerClient = () => {
     return await $fetch('/api/list-documents', { query });
   };
 
-  return { createDocument, getDocument, updateDocument, deleteDocument, listDocuments };
+    // --------------------
+  // New: Get Revision ID
+  // --------------------
+  const getRevisionId = async (documentId: string) => {
+    console.log("documentId", documentId)
+    const response = await $fetch('/api/get-revision', {
+      method: 'POST',
+      body: { documentId },
+    });
+    return response;
+  };
+
+  const setAccessControl = async (documentId: string, accessControl: Array<{ user: string; access_level: string }>) => {
+  return await $fetch('/api/set-access-control', {
+    method: 'POST',
+    body: { documentId, accessControl }
+  });
+};
+  return { createDocument, getDocument, updateDocument, deleteDocument, listDocuments , getRevisionId, setAccessControl};
 };

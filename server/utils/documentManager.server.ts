@@ -95,3 +95,35 @@ export const copyDocument = async (
 ) => {
   return await createDocument(sourceFileId, sourceOwner, newName, folderPath, accessControl, metadata);
 };
+
+export const getRevisionId = async (documentId: string) => {
+ 
+
+  // Assuming DocumentManager provides a method to fetch revisions
+  // or you can adapt this if your SDK has a different method name.
+  const revisions = await getDocManager().getRevisions(documentId);
+
+  // Return the latest revision ID (most common need)
+  if (Array.isArray(revisions) && revisions.length > 0) {
+    const latestRevision = revisions[0];
+    return latestRevision.revision_id;
+  }
+
+  console.warn(`⚠️ No revisions found for document: ${documentId}`);
+  return null;
+};
+
+export const setAccessControl = async (
+  documentId: string,
+  accessControl: Array<{ user: string; access_level: 'read' | 'read_write' | 'comment' }>
+) => {
+  if (!documentId || !Array.isArray(accessControl)) {
+    throw new Error('Invalid arguments: documentId and accessControl are required');
+  }
+
+
+  await getDocManager().setAccessControl(documentId, accessControl);
+  console.log(`✅ Access control updated for document: ${documentId}`);
+};
+
+
