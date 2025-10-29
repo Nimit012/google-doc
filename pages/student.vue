@@ -122,7 +122,7 @@
                       :alt="selectedDoc.name || taskData.title"
                       class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
                       referrerpolicy="no-referrer"
-                       @click="openDocumentPreview"
+                       @click="openPdf"
                     />
                   </div>
 

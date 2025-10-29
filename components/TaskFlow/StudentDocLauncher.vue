@@ -483,9 +483,12 @@ const downloadAttempt = async () => {
       console.error("No PDF export link found");
       return;
     }
+ // ✅ Build Google Drive v3 export URL instead of using old feeds/download
+    const exportUrl = `https://docs.google.com/document/d/${props.masterDocId}/export?format=pdf`
 
-    // ✅ Open in new tab
-    window.open(pdfUrl, "_blank", "noopener,noreferrer");
+    console.log("Using export URL:", exportUrl);
+
+   window.open(`https://docs.google.com/document/d/${props.masterDocId}/export?format=pdf`, "_blank");
   } catch (error) {
     console.error("Failed to get or open PDF export:", error);
   }
