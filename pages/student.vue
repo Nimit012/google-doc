@@ -122,7 +122,7 @@
                       :alt="selectedDoc.name || taskData.title"
                       class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
                       referrerpolicy="no-referrer"
-                      @click="openDocumentPreview"
+                       @click="openDocumentPreview"
                     />
                   </div>
 
@@ -635,7 +635,10 @@ const handleAssignmentStarted = (assignmentData) => {
   // Just update our flow state
   startStudentTask(assignmentData);
 };
-
+const openPdf = async () => {
+  await studentDocLauncherRef.value.downloadAttempt();
+  
+};
 const handleCopyCreated = (copyData) => {
   console.log("Document copy created:", copyData);
   studentCopyData.value = {

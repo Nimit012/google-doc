@@ -117,6 +117,7 @@ import DocumentPicker from "../GoogleDrive/DocumentPicker.vue";
 const emit = defineEmits(["document-confirmed", "document-loading"]);
 
 const { copyDocument } = useGoogleDrive();
+const { selectDocument } = useTaskFlow();
 const { createDocument } = useDocumentManagerClient();
 
 // Component state
@@ -140,35 +141,13 @@ const handleDocumentSelected = async (docData) => {
       // Start loader
       emit("document-loading", { loading: true });
 
-      const masterCopyName = `Task Master - ${
-        docData.name
-      } - ${new Date().toLocaleDateString()}`;
+      
 
-      // Create master document
-      const masterCopyResult = await createDocument({
-        sourceFileId: docData.id,
-        sourceOwner: "maria.teacher@greydls.com", // ✅ Teacher’s email
-        name: masterCopyName,
-      });
-
-      // ✅ API response is already the final document
-      const masterDocData = {
-        ...docData,
-        originalId: docData.id,
-        originalUrl: docData.url,
-        originalName: docData.name,
-        id: masterCopyResult.document_id,
-        url: masterCopyResult.access_url,
-        name: masterCopyResult.name,
-        masterCopyId: masterCopyResult.document_id,
-        masterCopyUrl: masterCopyResult.access_url,
-      };
-
-      selectedDocument.value = masterDocData;
+      selectedDocument.value = docData;
       confirmed.value = true;
 
       // Emit final document event
-      emit("document-confirmed", masterDocData);
+      emit("document-confirmed", docData);
     } catch (error) {
       console.error("Failed to create master copy:", error);
       alert("Failed to create master copy. Please try again.");
@@ -176,6 +155,49 @@ const handleDocumentSelected = async (docData) => {
       // ✅ Always stop loader — success or error
       emit("document-loading", { loading: false });
     }
+  }
+};
+const createMasterCopy = async () => {
+  try {
+    const masterCopyName = `Task Master - ${
+      selectedDocument.value.name
+    } - ${new Date().toLocaleDateString()}`;
+ emit("document-loading", { loading: true });
+    // Create master document
+    const masterCopyResult = await createDocument({
+      sourceFileId: selectedDocument.value.id,
+      sourceOwner: "maria.teacher@greydls.com", // Teacher's email
+      name: masterCopyName,
+      accessControl: [
+        { user: "emma.student@greydls.com", access_level: 'read' },
+      ],
+    });
+
+    // Update the selected document with master copy details
+    const masterDocData = {
+      ...selectedDocument.value,
+      originalId: selectedDocument.value.id,
+      originalUrl: selectedDocument.value.url,
+      originalName: selectedDocument.value.name,
+      id: masterCopyResult.document_id,
+      url: masterCopyResult.access_url,
+      name: masterCopyResult.name,
+      masterCopyId: masterCopyResult.document_id,
+      masterCopyUrl: masterCopyResult.access_url,
+    };
+
+    selectedDocument.value = masterDocData;
+    selectDocument(masterDocData);
+    confirmed.value = true;
+
+      // Emit final document event
+      emit("document-confirmed", docData);
+  } catch (error) {
+    console.error("Failed to create master copy:", error);
+    
+  } finally {
+    // Always stop loader — success or error
+    emit("document-loading", { loading: false });
   }
 };
 
@@ -229,5 +251,6 @@ defineExpose({
   // Add the triggerPicker method that calls the DocumentPicker's handleAuthClick
   triggerPicker: openPicker,
   downloadAttempt,
+  createMasterCopy,
 });
 </script>

@@ -414,10 +414,11 @@ const startAssignment = async () => {
 
     const copiedDoc = await createDocument(
       {
-        sourceFileId: props.originalDocId, // teacher's original document
+        sourceFileId: props.masterDocId, // teacher's original document
         name: `${props.taskTitle} - ${props.studentEmail}`,
         accessControl: [
-          { user: "emma.student@greydls.com", access_level: 'read_write' }, // student can edit
+          { user: "emma.student@greydls.com", access_level: 'read_write' },
+
        
       ],
     }
@@ -460,9 +461,40 @@ const startAssignment = async () => {
   }
 };
 
+const downloadAttempt = async () => {
+  const { getRevisionId } = useDocumentManagerClient();
+
+  try {
+    // Call your API / composable to get the revision info
+    const revisionData = await getRevisionId(props.masterDocId);
+    console.log("revision data:", revisionData);
+
+    // Get the export_links object safely
+    const exportLinks = revisionData.data.revisionId.export_links;
+    console.log("export links:", exportLinks);
+    if (!exportLinks) {
+      console.error("No export links found in revision data:", revisionData);
+      return;
+    }
+
+    // Extract the PDF link
+    const pdfUrl = exportLinks["application/pdf"];
+    if (!pdfUrl) {
+      console.error("No PDF export link found");
+      return;
+    }
+
+    // ✅ Open in new tab
+    window.open(pdfUrl, "_blank", "noopener,noreferrer");
+  } catch (error) {
+    console.error("Failed to get or open PDF export:", error);
+  }
+};
+
 // Expose methods for parent component
 defineExpose({
   getCreatedDocId: () => createdDocId.value,
   startAssignment,
+  downloadAttempt,
 });
 </script>

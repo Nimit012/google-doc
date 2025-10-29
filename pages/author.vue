@@ -509,7 +509,7 @@
                       class="w-[10rem] h-[12rem] border border-gray-200 rounded overflow-hidden bg-gray-50"
                     >
                       <img
-                        @click='openPdf'
+                        @click="openDocumentPreview"
                         :src="selectedDoc.thumbnailLink"
                         :alt="selectedDoc.name"
                         class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
@@ -1057,8 +1057,10 @@ const changeDocument = () => {
 };
 
 // MODIFIED METHOD: Make assignment available to student and show modal
-const makeAvailableToStudent = () => {
+const makeAvailableToStudent = async () => {
+  await authorDocPickerRef.value.createMasterCopy();
   documentSaved.value = true;
+
   createStudentPreview();
   
   // Show the success modal
