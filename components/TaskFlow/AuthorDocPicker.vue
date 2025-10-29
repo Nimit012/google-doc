@@ -162,7 +162,7 @@ const createMasterCopy = async () => {
     const masterCopyName = `Task Master - ${
       selectedDocument.value.name
     } - ${new Date().toLocaleDateString()}`;
-
+ emit("document-loading", { loading: true });
     // Create master document
     const masterCopyResult = await createDocument({
       sourceFileId: selectedDocument.value.id,
@@ -188,10 +188,13 @@ const createMasterCopy = async () => {
 
     selectedDocument.value = masterDocData;
     selectDocument(masterDocData);
-    return masterDocData;
+    confirmed.value = true;
+
+      // Emit final document event
+      emit("document-confirmed", docData);
   } catch (error) {
     console.error("Failed to create master copy:", error);
-    alert("Failed to create master copy. Please try again.");
+    
   } finally {
     // Always stop loader — success or error
     emit("document-loading", { loading: false });
