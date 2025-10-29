@@ -414,10 +414,11 @@ const startAssignment = async () => {
 
     const copiedDoc = await createDocument(
       {
-        sourceFileId: props.originalDocId, // teacher's original document
+        sourceFileId: props.masterDocId, // teacher's original document
         name: `${props.taskTitle} - ${props.studentEmail}`,
         accessControl: [
-          { user: "emma.student@greydls.com", access_level: 'read_write' }, // student can edit
+          { user: "emma.student@greydls.com", access_level: 'read_write' },
+
        
       ],
     }
