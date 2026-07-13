@@ -504,7 +504,7 @@
                     </h4>
 
                     <!-- Document metadata card + thumbnail -->
-                    <div class="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm ">
+                    <div class="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm w-fit">
                       <!-- Metadata header -->
                       <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white">
                         <div class="flex items-center space-x-3 min-w-0">
