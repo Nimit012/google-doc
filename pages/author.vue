@@ -497,44 +497,81 @@
 
               <div class="bg-white rounded-lg">
                 <div class="flex items-start space-x-4 mb-4">
-                  <div class="flex-shrink-0">
+                  <div class="w-full">
                     <h4 class="mb-2">
                       Using the materials included, complete the activities in
                       the Google Document below
                     </h4>
 
-                    <!-- Use thumbnail instead of iframe -->
-                    <div
-                      v-if="selectedDoc.thumbnailLink"
-                      class="w-[10rem] h-[12rem] border border-gray-200 rounded overflow-hidden bg-gray-50"
-                    >
-                      <img
-                        @click="openDocumentPreview"
-                        :src="selectedDoc.thumbnailLink"
-                        :alt="selectedDoc.name"
-                        class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                        referrerpolicy="no-referrer"
-                      />
-                    </div>
+                    <!-- Document metadata card + thumbnail -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm ">
+                      <!-- Metadata header -->
+                      <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white">
+                        <div class="flex items-center space-x-3 min-w-0">
+                          <!-- Google Docs icon -->
+                          <img
+                            v-if="selectedDoc.iconUrl"
+                            :src="selectedDoc.iconUrl"
+                            alt="Google Docs"
+                            class="w-6 h-6 flex-shrink-0"
+                          />
+                          <svg
+                            v-else
+                            class="w-6 h-6 flex-shrink-0 text-blue-500"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                          </svg>
+                          <div class="min-w-0">
+                            <p class="text-sm font-semibold text-gray-900 truncate">{{ selectedDoc.name }}</p>
+                            <p class="text-xs text-gray-500">
+                              Document in Google Docs
+                              <span v-if="selectedDoc.lastEditedDate"> · Last Updated: {{ selectedDoc.lastEditedDate }}</span>
+                            </p>
+                          </div>
+                        </div>
+                        <!-- Comment count badge -->
+                        <span
+                          v-if="selectedDoc.commentCount != null"
+                          class="flex-shrink-0 inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-100 rounded-full px-2 py-1 ml-3"
+                        >
+                          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                          {{ selectedDoc.commentCount }} comment{{ selectedDoc.commentCount !== 1 ? 's' : '' }}
+                        </span>
+                      </div>
 
-                    <!-- Fallback for when thumbnail fails or doesn't exist -->
-                    <div
-                      v-else
-                      class="w-[10rem] h-[12rem] bg-blue-50 border border-blue-200 rounded flex flex-col items-center justify-center cursor-pointer hover:bg-blue-100 transition-colors"
-                      @click="openDocumentPreview"
-                    >
-                      <svg
-                        class="w-10 h-10 text-blue-500 mb-2"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
+                      <!-- Thumbnail -->
+                      <div
+                        v-if="selectedDoc.thumbnailLink"
+                        class="w-full overflow-hidden bg-gray-50"
                       >
-                        <path
-                          d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"
+                        <img
+                          @click="openDocumentPreview"
+                          :src="selectedDoc.thumbnailLink"
+                          :alt="selectedDoc.name"
+                          class="max-w-full w-auto h-auto cursor-pointer hover:opacity-90 transition-opacity"
+                          referrerpolicy="no-referrer"
                         />
-                      </svg>
-                      <span class="text-xs text-blue-600 text-center px-2">{{
-                        selectedDoc.name
-                      }}</span>
+                      </div>
+
+                      <!-- Fallback thumbnail -->
+                      <div
+                        v-else
+                        class="w-full h-[22rem] bg-blue-50 flex flex-col items-center justify-center cursor-pointer hover:bg-blue-100 transition-colors"
+                        @click="openDocumentPreview"
+                      >
+                        <svg
+                          class="w-14 h-14 text-blue-500 mb-3"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                        </svg>
+                        <span class="text-sm text-blue-600 text-center px-4">{{ selectedDoc.name }}</span>
+                      </div>
                     </div>
                   </div>
                 </div>

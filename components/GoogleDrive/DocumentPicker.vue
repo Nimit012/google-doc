@@ -20,6 +20,7 @@ const {
   authenticate, 
   isAuthenticated,
   fetchThumbnail,
+  fetchCommentCount,
   listPermissions,
   makeDocumentPublic
 } = useGoogleDrive()
@@ -121,8 +122,11 @@ async function pickerCallback(data) {
           // Emit loading start immediately when doc is selected
           emit('document-loading', { loading: true })
           
-          const thumbnailLink = await fetchThumbnail(doc.id)
-          const permissions = await listPermissions(doc.id)
+          const [thumbnailLink, commentCount, permissions] = await Promise.all([
+            fetchThumbnail(doc.id),
+            fetchCommentCount(doc.id),
+            listPermissions(doc.id)
+          ])
           console.log("permissions", permissions)
           
           // Make document public for viewing
@@ -140,7 +144,8 @@ async function pickerCallback(data) {
             iconUrl: doc.iconUrl,
             lastEditedDate: formattedDate,
             serviceId: doc.serviceId,
-            thumbnailLink: thumbnailLink
+            thumbnailLink: thumbnailLink,
+            commentCount: commentCount
           }
           
           // Directly emit to parent instead of showing modal
